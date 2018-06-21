@@ -15,12 +15,8 @@ fun main(args: Array<String>) {
     // check for null response
     if (catalog != null) {
         val bibleData = processBibleData(catalog)
-        for (language in bibleData.languages) {
-            println(language.title)
-            for (bible in language.bibles) {
-                println("    " + bible.title)
-            }
-        }
+        println(bibleData.getLanguageList().map { it.title })
+        println(bibleData.getBiblesForLanguage(bibleData.getLanguageList()[0].identifier))
     }
 }
 

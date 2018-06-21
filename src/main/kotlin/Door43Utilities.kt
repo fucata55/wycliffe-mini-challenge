@@ -1,9 +1,9 @@
 fun processBibleData(catalog: Door43Response) : BibleData {
     // we want to extract the USFM Bible information from the response
-    val languages = ArrayList<Language>()
+    val languages = HashMap<String, Language>()
 
     for (language in catalog.languages) {
-        val bibles = ArrayList<Bible>()
+        val bibles = HashMap<String, Bible>()
 
         // search for ULB Bible
         for (resource in language.resources) {
@@ -44,8 +44,8 @@ fun processBibleData(catalog: Door43Response) : BibleData {
                         resource.title,
                         books
                 )
-                // add the Bible to the list
-                bibles.add(thisBible)
+                // add the Bible to the map
+                bibles[thisBible.identifier] = thisBible
             }
         }
         // only add if there is at least one Bible
@@ -56,7 +56,8 @@ fun processBibleData(catalog: Door43Response) : BibleData {
                     language.direction,
                     bibles
             )
-            languages.add(thisLanguage)
+            // add the language to the map
+            languages[thisLanguage.identifier] = thisLanguage
         }
     }
 
