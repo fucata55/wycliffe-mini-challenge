@@ -11,6 +11,9 @@ fun main(args: Array<String>) {
 
     val catalog = door43.getCatalog().execute().body()
 
+    val file = door43.getUsfmFromUrl("https://cdn.door43.org/en/ulb/v10/gen.usfm")
+    println(file.execute().body()?.string())
+
     // print out some demo data
     // check for null response
     if (catalog != null) {

@@ -62,9 +62,7 @@ fun processBibleData(catalog: Door43Response) : BibleData {
     }
 
     // create the Bible data
-    val bibleData = BibleData(
+    return BibleData(
             languages
     )
-
-    return bibleData
 }
