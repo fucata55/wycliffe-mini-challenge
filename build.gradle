@@ -1,15 +1,27 @@
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.2.50'
+buildscript {
+    ext.kotlin_version = '1.2.50'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
 
 version '1.0-SNAPSHOT'
+
+apply plugin: 'kotlin'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "com.squareup.retrofit2:retrofit:2.4.0"
+    compile "com.squareup.retrofit2:converter-moshi:2.3.0"
+    compile "com.squareup.moshi:moshi-kotlin:1.5.0"
 }
 
 compileKotlin {
