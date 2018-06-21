@@ -1,6 +1,10 @@
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+# Door43 Reader Application
 
+## `Door43` Class
+
+You can use the `Door43` class to access the Scripture from Door43. The program below is an example.
+
+```kotlin
 fun main(args: Array<String>) {
     // create a door43 object
     val door43 = Door43()
@@ -39,5 +43,5 @@ fun main(args: Array<String>) {
         }
     }
 }
-
+```
 
