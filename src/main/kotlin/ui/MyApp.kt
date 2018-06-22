@@ -28,24 +28,31 @@ class MyView : View() {
                 //gets just names of languages
                 //map does the same operation to each elem of the list, storing the result in a new list
                 val langsnames = langsdata.map { it.title };
+                //we make a drop-down menu out of a combobox and tell the combobox to store the selection of the user in selected
+                val selected = SimpleStringProperty()
+                combobox(selected, langsnames);
+                //make a submit button that tells the program when to act upon what is stored in submit
+                button("SUBMIT") {
+                    action {
+                        if(selected.value == null){
+                            println("SELECT A LANG")
+                        }
+                        else {
+                            println(selected.value);
+                        }
+                    }
+                }
+                /*
                 combobox<String> {
                     items = FXCollections.observableList(langsnames);
                 }
+                */
                 button("Choose this language") {
                     action {
                         controller.writeToDb(input.value)
                         input.value = "";
                     }
                 }
-
-
-                /*
-                val selectedCity = SimpleStringProperty()
-                combobox(selectedCity, langsnames);
-                controller.setVersion(versionSearch.value)
-                */
-
-                println(selectedCity);
 
 
             } else {
