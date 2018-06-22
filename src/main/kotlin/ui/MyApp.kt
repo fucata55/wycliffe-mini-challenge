@@ -1,11 +1,13 @@
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import tornadofx.*
 class MyApp: App(MyView::class)
 
 class MyView : View() {
     val controller: MyController by inject()
     val input = SimpleStringProperty()
+    val door43 = Door43();
 
     override val root = form {
         fieldset {
@@ -19,11 +21,37 @@ class MyView : View() {
                     input.value = ""
                 }
             }
-            val texasCities = FXCollections.observableArrayList("Austin",
-                    "Dallas","Midland", "San Antonio","Fort Worth")
+            var catalog = door43.fetchCatalog();
+            if(catalog != null) {
+                //gets language names and associated data(an arraylist)
+                val langsdata = catalog.getLanguageList();
+                //gets just names of languages
+                //map does the same operation to each elem of the list, storing the result in a new list
+                val langsnames = langsdata.map { it.title };
+                combobox<String> {
+                    items = FXCollections.observableList(langsnames);
+                }
+                button("Choose this language") {
+                    action {
+                        controller.writeToDb(input.value)
+                        input.value = "";
+                    }
+                }
 
-            combobox<String> {
-                items = texasCities
+
+                /*
+                val selectedCity = SimpleStringProperty()
+                combobox(selectedCity, langsnames);
+                controller.setVersion(versionSearch.value)
+                */
+
+                println(selectedCity);
+
+
+            } else {
+                combobox<String> {
+                    items = FXCollections.observableList(listOf("no available langs"));
+                }
             }
         }
     }
