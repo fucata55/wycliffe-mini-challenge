@@ -10,6 +10,8 @@ class MyView : View() {
     val selectedBook = SimpleStringProperty()
     val selectedChap = SimpleStringProperty()
 
+    var currentBible : BibleMetadata? = null
+
     val door43 = Door43();
 
     override val root = form {
@@ -26,8 +28,28 @@ class MyView : View() {
         val bookBox = combobox(selectedBook,listOf("Select a language"));
         val chapBox = combobox(selectedChap, listOf("Select a book"));
 
-        selectedLang.onChange {
-            println(it)
+        selectedLang.onChange { languageTitle ->
+            val theLanguage = langsdata?.filter { it.title == languageTitle }?.firstOrNull()
+            if (theLanguage != null) {
+                currentBible = theLanguage.bibles["ulb"]
+                if (currentBible != null) {
+                    val bookNames = currentBible!!.books.map { it.title }
+                    bookBox.items = FXCollections.observableList(bookNames)
+                }
+            }
+        }
+
+        selectedBook.onChange { bookTitle ->
+            if (currentBible != null) {
+                val thisBook = currentBible!!.books.filter { it.title == bookTitle }.firstOrNull()
+                if (thisBook != null) {
+                    val bookContents = door43.getBook(currentBible!!, thisBook.identifier)
+                    if (bookContents != null) {
+                        val chapterNumbers = (1..bookContents.chapters.size).map { it.toString() }
+                        chapBox.items = FXCollections.observableList(chapterNumbers)
+                    }
+                }
+            }
         }
     }
 }
