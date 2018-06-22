@@ -1,5 +1,4 @@
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import tornadofx.*
 
 fun main(args: Array<String>) {
     // create a door43 object
@@ -38,6 +37,7 @@ fun main(args: Array<String>) {
             }
         }
     }
+    launch<MyApp>(args);
 }
 
 
