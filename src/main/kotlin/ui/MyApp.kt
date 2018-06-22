@@ -11,6 +11,7 @@ class MyView : View() {
     val selectedChap = SimpleStringProperty()
 
     var currentBible : BibleMetadata? = null
+    var currentBook : Book? = null
 
     val door43 = Door43();
 
@@ -23,10 +24,12 @@ class MyView : View() {
         //gets just names of languages as strings
         //(map does the same operation to each elem of the list, storing the result in a new list)
         val langsnames = langsdata?.map { it.title }
-        //we make a drop-down menu out of a combobox and tell the combobox to store the selection of the user in selected
+
+        //we make a drop-down menu out of a combobox and tell the combobox
+        // to store the selection of the user in selected
         val langBox = combobox(selectedLang, langsnames)
-        val bookBox = combobox(selectedBook,listOf("Select a language"));
-        val chapBox = combobox(selectedChap, listOf("Select a book"));
+        val bookBox = combobox(selectedBook,listOf("Select a language")); // create book combo box
+        val chapBox = combobox(selectedChap, listOf("Select a book"));    // create chapter combo box
 
         selectedLang.onChange { languageTitle ->
             val theLanguage = langsdata?.filter { it.title == languageTitle }?.firstOrNull()
@@ -43,11 +46,28 @@ class MyView : View() {
             if (currentBible != null) {
                 val thisBook = currentBible!!.books.filter { it.title == bookTitle }.firstOrNull()
                 if (thisBook != null) {
-                    val bookContents = door43.getBook(currentBible!!, thisBook.identifier)
-                    if (bookContents != null) {
-                        val chapterNumbers = (1..bookContents.chapters.size).map { it.toString() }
+                    currentBook = door43.getBook(currentBible!!, thisBook.identifier)
+                    if (currentBook != null) {
+                        val chapterNumbers = (1..currentBook!!.chapters.size).map { it.toString() }
                         chapBox.items = FXCollections.observableList(chapterNumbers)
                     }
+                }
+            }
+        }
+
+        // create a textfield for the Scripture
+        val textField = textarea {
+            editableProperty().set(false)
+            wrapTextProperty().set(true)
+        }
+
+        // update text field when chapter changes
+        selectedChap.onChange {
+            if (it != null) {
+                val chapterNumber = it.toInt()
+                if (currentBook != null) {
+                    val chapterText = currentBook!!.chapters[chapterNumber - 1].text
+                    textField.text = chapterText
                 }
             }
         }
