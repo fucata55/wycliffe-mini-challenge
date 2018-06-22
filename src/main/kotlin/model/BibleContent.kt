@@ -1,3 +1,5 @@
+package model
+
 class Book(val title: String, val chapters: List<Chapter>) {
     fun getAllChapters() {
         var allChapters = ""

@@ -1,3 +1,6 @@
+package retrofit
+
+import model.Door43Response
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET

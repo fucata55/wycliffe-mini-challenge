@@ -1,19 +1,15 @@
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import model.*
+import retrofit.Door43ApiService
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class Door43 {
-    val DOOR43_API_ENDPOINT = "https://api.door43.org/v3/"
-    private var apiService : Door43ApiService
+@Singleton
+class Door43 @Inject constructor(
+        // accept inject of Door43ApiService
+        // this could be created by retrofit, or another http client
+        private val apiService : Door43ApiService) {
+
     private var catalogMetadata: CatalogMetadata? = null
-
-    init {
-        // generate the retrofit instance and api service
-        val retrofit = Retrofit.Builder()
-                .baseUrl(DOOR43_API_ENDPOINT)
-                .addConverterFactory(MoshiConverterFactory.create())
-                .build()
-        apiService = retrofit.create(Door43ApiService::class.java)
-    }
 
     fun fetchCatalog() : CatalogMetadata? {
         // grab the catalog data from the API

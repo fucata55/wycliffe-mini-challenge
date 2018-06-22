@@ -1,9 +1,16 @@
+import dagger.DaggerSingletonComponent
+import dagger.ServiceModule
+import dagger.internal.DaggerCollections
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 fun main(args: Array<String>) {
     // create a door43 object
-    val door43 = Door43()
+    var component = DaggerSingletonComponent.builder()
+            .serviceModule(ServiceModule())
+            .build()
+
+    val door43 = Door43(component.door43Service())
 
     // grab the catalog
     val catalog = door43.fetchCatalog()
@@ -38,6 +45,7 @@ fun main(args: Array<String>) {
             }
         }
     }
+
 }
 
 

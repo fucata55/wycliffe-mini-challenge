@@ -1,3 +1,5 @@
+package model
+
 class CatalogMetadata(val languages: Map<String, LanguageMetadata>) {
 
     fun getLanguageList() : List<LanguageMetadata> {
