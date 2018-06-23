@@ -1,52 +1,37 @@
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import model.*
 import retrofit.Door43ApiService
+import retrofit2.Retrofit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Door43 @Inject constructor(
-        // accept inject of Door43ApiService
-        // this could be created by retrofit, or another http client
-        private val apiService : Door43ApiService) {
+class Door43 @Inject constructor(var apiService: Door43ApiService) {
 
-    private var catalogMetadata: CatalogMetadata? = null
-
-    fun fetchCatalog() : CatalogMetadata? {
+    fun fetchCatalog() : Observable<CatalogMetadata>  {
         // grab the catalog data from the API
-        var response = apiService.getCatalog().execute().body()
-        if (response != null) {
-            // we're safe from null monster
-            catalogMetadata = parseDoor43Response(response)
-            return catalogMetadata
-        }
-        return null
+        return apiService.getCatalog()
+                .map {
+                    parseDoor43Response(it)
+                }
     }
 
-    fun getBook(bibleMetadata: BibleMetadata, bookIdentifier: String) : Book? {
+    fun getBook(bibleMetadata: BibleMetadata, bookIdentifier: String) : Observable<Book>? {
         // bookIndex must be between 0 and 65
         // bookChapter must be a valid number
         // try to find the book data
-        var usfmBookMetadata = bibleMetadata.books.filter { it.identifier == bookIdentifier }.firstOrNull()
-        if (usfmBookMetadata != null) {
-            // we found the book!
-            var responseBody = apiService.getUsfmFromUrl(usfmBookMetadata.url).execute().body()
-            if (responseBody != null) {
-                var usfm = responseBody.string()
-                // parse the usfm into a readable format
-                var book = parseUsfmBook(usfm)
-                if (book != null) {
-                    return book
+        var usfmBookMetadata = bibleMetadata.books.filter { it.identifier == bookIdentifier }.first()
+        // we found the book!
+        return apiService.getUsfmFromUrl(usfmBookMetadata.url).subscribeOn(Schedulers.io())
+                .map {
+                    parseUsfmBook(it.string())
                 }
-            }
-        }
-        // had a problem, return null
-        return null
     }
 
     private fun parseDoor43Response(catalog: Door43Response): CatalogMetadata {
         // we want to extract the USFM Bible information from the response
         val languages = HashMap<String, LanguageMetadata>()
-
         for (language in catalog.languages) {
             val bibles = HashMap<String, BibleMetadata>()
 
