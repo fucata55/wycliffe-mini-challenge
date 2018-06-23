@@ -43,7 +43,7 @@ class Door43 {
     private fun parseDoor43Response(catalog: Door43Response): CatalogMetadata {
         // we want to extract the USFM Bible information from the response
         val languages = HashMap<String, LanguageMetadata>()
-
+        println("parsing in ${Thread.currentThread()}")
         for (language in catalog.languages) {
             val bibles = HashMap<String, BibleMetadata>()
 
