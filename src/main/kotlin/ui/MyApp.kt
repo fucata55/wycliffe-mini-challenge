@@ -11,6 +11,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Font
 import tornadofx.*
 import javax.inject.Inject
 import model.*
@@ -52,6 +53,8 @@ class MyView : View() {
     lateinit var door43 : Door43
 
     init {
+        // set the window title
+        title = "Door43 Scripture Reader"
         // use dagger to inject Door43
         door43 = DaggerSingletonComponent.builder()
                 .serviceModule(ServiceModule())
@@ -214,6 +217,16 @@ class MyView : View() {
             }
 
         }
+    }
+
+    fun makeTextBigger() {
+        val currentSize = textArea.font.size
+        textArea.font = Font.font(currentSize + 5)
+    }
+
+    fun makeTextSmaller() {
+        val currentSize = textArea.font.size
+        textArea.font = Font.font(currentSize - 5)
     }
 
 }
