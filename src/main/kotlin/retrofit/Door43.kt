@@ -1,12 +1,14 @@
+package retrofit
+
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import model.*
-import retrofit.Door43ApiService
-import retrofit2.Retrofit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+// only one API connection
+// use dagger2 to inject api service
 class Door43 @Inject constructor(var apiService: Door43ApiService) {
 
     fun fetchCatalog() : Observable<CatalogMetadata>  {

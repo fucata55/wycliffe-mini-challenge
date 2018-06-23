@@ -2,6 +2,7 @@ package dagger
 
 import retrofit.Door43ApiService
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
@@ -11,14 +12,14 @@ class ServiceModule {
 
     @Provides
     @Singleton
-    fun retrofit(): Retrofit = Retrofit.Builder()
-            .baseUrl(DOOR43_API_ENDPOINT)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .build()
+    fun provideDoor43ApiService() : Door43ApiService =
+            Retrofit.Builder()
+                    .baseUrl(DOOR43_API_ENDPOINT)
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // RxJava adapter to Observable
+                    .addConverterFactory(MoshiConverterFactory.create())       // moshi JSON parse
+                    .build()
+                    .create(Door43ApiService::class.java)
 
-    @Provides
-    @Singleton
-    fun door43Service(retrofit: Retrofit): Door43ApiService =
-            retrofit.create(Door43ApiService::class.java)
+    // no provides for Door43 object since Dagger can infer the setup
 
 }

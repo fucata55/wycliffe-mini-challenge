@@ -1,3 +1,5 @@
+import dagger.DaggerSingletonComponent
+import dagger.ServiceModule
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
@@ -7,6 +9,10 @@ import javafx.collections.FXCollections
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import tornadofx.*
+import javax.inject.Inject
+import model.*
+import retrofit.Door43
+
 class MyApp: App(MyView::class)
 
 class MyView : View() {
@@ -24,9 +30,20 @@ class MyView : View() {
     var catalogDisposable : Disposable? = null
     var currentBookDisposable : Disposable? = null
 
-    val door43 = Door43()
-
     var textField : TextArea? = null
+
+    // user dagger to inject door43
+    @Inject
+    lateinit var door43 : Door43
+
+    init {
+        // use dagger to inject Door43
+        door43 = DaggerSingletonComponent.builder()
+                .serviceModule(ServiceModule())
+                .build()
+                .door43()
+
+    }
 
     override val root = borderpane {
         top = hbox {
