@@ -1,4 +1,8 @@
+import io.reactivex.Observable
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 class Door43 {
@@ -10,47 +14,36 @@ class Door43 {
         // generate the retrofit instance and api service
         val retrofit = Retrofit.Builder()
                 .baseUrl(DOOR43_API_ENDPOINT)
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // RxJava adapter to Observable
+                .addConverterFactory(MoshiConverterFactory.create())       // moshi JSON parse
                 .build()
         apiService = retrofit.create(Door43ApiService::class.java)
     }
 
-    fun fetchCatalog() : CatalogMetadata? {
+    fun fetchCatalog() : Observable<CatalogMetadata>  {
         // grab the catalog data from the API
-        var response = apiService.getCatalog().execute().body()
-        if (response != null) {
-            // we're safe from null monster
-            catalogMetadata = parseDoor43Response(response)
-            return catalogMetadata
-        }
-        return null
+        return apiService.getCatalog()
+                .map {
+                    parseDoor43Response(it)
+                }
     }
 
-    fun getBook(bibleMetadata: BibleMetadata, bookIdentifier: String) : Book? {
+    fun getBook(bibleMetadata: BibleMetadata, bookIdentifier: String) : Observable<Book>? {
         // bookIndex must be between 0 and 65
         // bookChapter must be a valid number
         // try to find the book data
-        var usfmBookMetadata = bibleMetadata.books.filter { it.identifier == bookIdentifier }.firstOrNull()
-        if (usfmBookMetadata != null) {
-            // we found the book!
-            var responseBody = apiService.getUsfmFromUrl(usfmBookMetadata.url).execute().body()
-            if (responseBody != null) {
-                var usfm = responseBody.string()
-                // parse the usfm into a readable format
-                var book = parseUsfmBook(usfm)
-                if (book != null) {
-                    return book
+        var usfmBookMetadata = bibleMetadata.books.filter { it.identifier == bookIdentifier }.first()
+        // we found the book!
+        return apiService.getUsfmFromUrl(usfmBookMetadata.url).subscribeOn(Schedulers.io())
+                .map {
+                    parseUsfmBook(it.string())
                 }
-            }
-        }
-        // had a problem, return null
-        return null
     }
 
     private fun parseDoor43Response(catalog: Door43Response): CatalogMetadata {
         // we want to extract the USFM Bible information from the response
         val languages = HashMap<String, LanguageMetadata>()
-
+        println("parsing in ${Thread.currentThread()}")
         for (language in catalog.languages) {
             val bibles = HashMap<String, BibleMetadata>()
 
