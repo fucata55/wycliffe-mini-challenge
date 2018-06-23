@@ -35,13 +35,17 @@ class MyView : View() {
             //we make a drop-down menu out of a combobox and tell the combobox
             // to store the selection of the user in selected
             langBox = combobox(selectedLang, controller.langsNames)
-            bookBox = combobox(selectedBook,listOf("Select a language")); // create book combo box
-            chapBox = combobox(selectedChap, listOf("Select a book"));    // create chapter combo box
+            bookBox = combobox(selectedBook,listOf("Select a book")); // create book combo box
+            chapBox = combobox(selectedChap, listOf("Select a chapter"));    // create chapter combo box
 
             // start with all combobox disabled
             langBox?.isDisable = true
             bookBox?.isDisable = true
             chapBox?.isDisable = true
+
+            langBox?.selectionModel?.selectFirst()
+            bookBox?.selectionModel?.selectFirst()
+            chapBox?.selectionModel?.selectFirst()
 
 
             selectedLang.onChange { languageTitle ->
@@ -78,7 +82,7 @@ class MyView : View() {
 class MyController: Controller() {
     val view : MyView by inject()
     var langsData : List<LanguageMetadata> = listOf()
-    var langsNames : List<String> = listOf()
+    var langsNames : List<String> = listOf("Loading...")
 
     var currentBible : BibleMetadata? = null
     var currentBook : Book? = null
@@ -98,19 +102,32 @@ class MyController: Controller() {
                 .door43()
 
         //gets catalog
-        var catalog: CatalogMetadata?
         catalogDisposable = door43.fetchCatalog()
                 .subscribeOn(Schedulers.io())
                 .observeOn(JavaFxScheduler.platform())
-                .subscribe {
+                .subscribe({
                     //gets language names and associated data(an arraylist) from catalog
                     langsData = it.getLanguageList()
                     //gets just names of languages as strings
                     //(map does the same operation to each elem of the list, storing the result in a new list)
                     langsNames = langsData.map { it.title }
+                    println(langsNames)
                     view.langBox?.items = FXCollections.observableList(langsNames) // put the names in the box
                     view.langBox?.isDisable = false // re enable the box
-                }
+
+                    // load english as the default if available
+                    if ("English" in langsNames)
+                    {
+                        view.langBox?.selectionModel?.select("English")
+                    } else {
+                        view.langBox?.selectionModel?.selectFirst()
+                    }
+                },{
+                    // on Error
+                    view.langBox?.items = FXCollections.observableList(listOf("Error"))
+                    view.langBox?.selectionModel?.selectFirst()
+                })
+
 
     }
 
@@ -129,6 +146,9 @@ class MyController: Controller() {
 
     fun processBookChanged(bookTitle: String) {
         if (currentBible != null) {
+            view.chapBox?.items = FXCollections.observableList(listOf("Loading..."))
+            view.chapBox?.selectionModel?.selectFirst()
+
             val thisBook = currentBible!!.books.filter { it.title == bookTitle }.firstOrNull()
             if (thisBook != null) {
                 view.chapBox?.isDisable = true // disable the box until the books are loaded
@@ -151,10 +171,16 @@ class MyController: Controller() {
 
     fun processChapterChanged(chapterInput: String)
     {
-        val chapterNumber = chapterInput.toInt()
-        if (currentBook != null) {
-            val chapterText = currentBook!!.chapters[chapterNumber - 1].text
-            view.textField?.text = chapterText
+        try {
+            val chapterNumber = chapterInput.toInt()
+            if (currentBook != null) {
+                val chapterText = currentBook!!.chapters[chapterNumber - 1].text
+                view.textField?.text = chapterText
+            }
+        } catch (err: NumberFormatException) {
+            // not a number selected
+            // fail silently
         }
+
     }
 }
