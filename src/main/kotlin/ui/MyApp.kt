@@ -10,8 +10,11 @@ import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.BorderPane
 import javafx.scene.text.Font
+import javafx.scene.web.WebView
 import tornadofx.*
 import javax.inject.Inject
 import model.*
@@ -32,7 +35,7 @@ class MyView : View() {
     val langBox : JFXComboBox<String> by fxid()
     val bookBox : JFXComboBox<String> by fxid()
     val chapBox : JFXComboBox<String> by fxid()
-    val textArea : TextArea by fxid()
+    val webView : WebView by fxid()
 
     // a bit of a hacky solution so that going to the previous book will load the last chapter
     var wasPrevious : Boolean = false
@@ -80,6 +83,7 @@ class MyView : View() {
         selectedBook.onChange {
             if (it != null) {
                 processBookChanged(it, wasPrevious)
+                wasPrevious = false
             }
         }
         selectedChap.onChange {
@@ -179,7 +183,7 @@ class MyView : View() {
             if (currentBook != null) {
                 currentChapter = currentBook!!.chapters[chapterNumber - 1]
                 val chapterText = currentChapter!!.text
-                textArea?.text = chapterText
+                webView.engine.loadContent(chapterText)
             }
         } catch (err: NumberFormatException) {
             // not a number selected
@@ -220,13 +224,14 @@ class MyView : View() {
     }
 
     fun makeTextBigger() {
-        val currentSize = textArea.font.size
-        textArea.font = Font.font(currentSize + 5)
+        //val currentSize = textArea.font.size
+        //textArea.font = Font.font(currentSize + 5)
     }
 
     fun makeTextSmaller() {
-        val currentSize = textArea.font.size
-        textArea.font = Font.font(currentSize - 5)
+        //val currentSize = textArea.font.size
+        //textArea.font = Font.font(currentSize - 5)
     }
+
 
 }

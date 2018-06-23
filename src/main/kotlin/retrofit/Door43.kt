@@ -11,6 +11,8 @@ import javax.inject.Singleton
 // use dagger2 to inject api service
 class Door43 @Inject constructor(var apiService: Door43ApiService) {
 
+
+
     fun fetchCatalog() : Observable<CatalogMetadata>  {
         // grab the catalog data from the API
         return apiService.getCatalog()
@@ -117,7 +119,26 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
                 if (thisChapterNumber > 0) {
                     // we have at least one whole chapter
                     // create the chapter object
-                    var chapter = Chapter(thisChapterNumber, thisChapterText)
+                    thisChapterText += "</p>" // close the last paragraph
+                    thisChapterText = """
+                                        <html>
+                                            <head>
+                                                <style>
+                                                    body {
+                                                        font-family: sans-serif;
+                                                    }
+                                                    p {
+                                                        line-height: 2em;
+                                                    }
+                                                </style>
+                                            </head>
+                                            <body>
+                                                <h1>$thisBookTitle $thisChapterNumber</h1>
+                                                $thisChapterText
+                                            </body>
+                                        </html>
+                                    """
+                    var chapter = Chapter(thisChapterNumber, thisChapterText.trimIndent())
                     thisBookChapters.add(chapter)
 
                     // remove chapter details
@@ -126,7 +147,14 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
                 thisChapterNumber += 1
             } else if (line.startsWith("\\v")) {
                 // show each verse on a new line
-                thisChapterText += line.removePrefix("\\v") + "\n"
+                var verseNumber = line.removePrefix("\\v ")
+                        .substringBefore(" ")
+                var verseText = line.removePrefix("\\v ")
+                        .substringAfter(" ")
+                        .replace(Regex("/\\\\f.*\\\\f\\*/g"), "") // get rid of footnotes
+                thisChapterText += "<sup>$verseNumber</sup>$verseText "
+            } else if (line.startsWith("\\p")) {
+                thisChapterText += "</p><p>"
             }
         }
 
