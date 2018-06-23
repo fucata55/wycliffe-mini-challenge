@@ -4,11 +4,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
-import javafx.scene.control.TextField
 import tornadofx.*
 import javax.inject.Inject
 import model.*
@@ -28,6 +26,9 @@ class MyView : View() {
     var chapBox : ComboBox<String>? = null
 
     var textField : TextArea? = null
+
+    // a bit of a hacky solution so that going to the previous book will load the last chapter
+    var wasPrevious : Boolean = false
 
 
     override val root = borderpane {
@@ -56,7 +57,8 @@ class MyView : View() {
 
             selectedBook.onChange { bookTitle ->
                 if (bookTitle != null) {
-                    controller.processBookChanged(bookTitle)
+                    controller.processBookChanged(bookTitle, wasPrevious)
+                    wasPrevious = false
                 }
             }
 
@@ -75,6 +77,26 @@ class MyView : View() {
                 wrapTextProperty().set(true)
             }
         }
+
+        right = hbox {
+            // add next button
+            button(">") {
+                action {
+                    // go to next chapter
+                    controller.nextChapter()
+                }
+            }
+        }
+
+        left = hbox {
+            // add previous button
+            button("<") {
+                action {
+                    // go to previous chapter
+                    controller.previousChapter()
+                }
+            }
+        }
     }
 }
 
@@ -86,7 +108,9 @@ class MyController: Controller() {
 
     var currentBible : BibleMetadata? = null
     var currentBook : Book? = null
+    var currentChapter: Chapter? = null
 
+    // todo: clean up disposables
     var catalogDisposable : Disposable? = null
     var currentBookDisposable : Disposable? = null
 
@@ -127,8 +151,6 @@ class MyController: Controller() {
                     view.langBox?.items = FXCollections.observableList(listOf("Error"))
                     view.langBox?.selectionModel?.selectFirst()
                 })
-
-
     }
 
     fun processLanguageChanged(languageTitle: String) {
@@ -144,7 +166,7 @@ class MyController: Controller() {
         }
     }
 
-    fun processBookChanged(bookTitle: String) {
+    fun processBookChanged(bookTitle: String, previous: Boolean) {
         if (currentBible != null) {
             view.chapBox?.items = FXCollections.observableList(listOf("Loading..."))
             view.chapBox?.selectionModel?.selectFirst()
@@ -162,7 +184,18 @@ class MyController: Controller() {
                                 val chapterNumbers = (1..currentBook!!.chapters.size).map { it.toString() }
                                 view.chapBox?.items = FXCollections.observableList(chapterNumbers)
                                 view.chapBox?.isDisable = false // re enable chapBox
-                                view.chapBox?.selectionModel?.selectFirst() // move to first chapter
+
+                                // figure out if we should load the first chapter
+                                // or if this is a result of arrowing to a previous book,
+                                // in which case we should load the last chapter
+                                if (previous)
+                                {
+                                    view.chapBox?.selectionModel?.selectLast()
+                                }
+                                else
+                                {
+                                    view.chapBox?.selectionModel?.selectFirst()
+                                }
                             }
                 }
             }
@@ -174,7 +207,8 @@ class MyController: Controller() {
         try {
             val chapterNumber = chapterInput.toInt()
             if (currentBook != null) {
-                val chapterText = currentBook!!.chapters[chapterNumber - 1].text
+                currentChapter = currentBook!!.chapters[chapterNumber - 1]
+                val chapterText = currentChapter!!.text
                 view.textField?.text = chapterText
             }
         } catch (err: NumberFormatException) {
@@ -182,5 +216,36 @@ class MyController: Controller() {
             // fail silently
         }
 
+    }
+
+    fun nextChapter() {
+        if (currentBook != null && currentChapter != null) {
+            // try to increment chapter number
+            var nextChapterNumber = currentChapter!!.number + 1
+            if (nextChapterNumber > currentBook!!.chapters.size) {
+                // on to the next book
+                view.bookBox?.selectionModel?.selectNext()
+            } else {
+                // we are good in this book
+                view.chapBox?.selectionModel?.selectNext()
+            }
+
+        }
+    }
+
+    fun previousChapter() {
+        if (currentBook != null && currentChapter != null) {
+            // try to increment chapter number
+            var nextChapterNumber = currentChapter!!.number - 1
+            if (nextChapterNumber <= 0) {
+                // on to the previous book
+                view.wasPrevious = true
+                view.bookBox?.selectionModel?.selectPrevious()
+            } else {
+                // we are good in this book
+                view.chapBox?.selectionModel?.selectPrevious()
+            }
+
+        }
     }
 }
