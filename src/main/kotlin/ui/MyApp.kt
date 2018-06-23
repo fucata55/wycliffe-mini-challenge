@@ -179,7 +179,7 @@ class MyController: Controller() {
                     currentBookDisposable = currentBookObservable
                             .subscribeOn(Schedulers.io())
                             .observeOn(JavaFxScheduler.platform())
-                            .subscribe {
+                            .subscribe({
                                 currentBook = it
                                 val chapterNumbers = (1..currentBook!!.chapters.size).map { it.toString() }
                                 view.chapBox?.items = FXCollections.observableList(chapterNumbers)
@@ -196,7 +196,12 @@ class MyController: Controller() {
                                 {
                                     view.chapBox?.selectionModel?.selectFirst()
                                 }
-                            }
+                            },{
+                                // on Error
+                                // handle it semi-gracefully
+                                view.chapBox?.items = FXCollections.observableList(listOf("Error"))
+                                view.chapBox?.selectionModel?.selectFirst()
+                            })
                 }
             }
         }
