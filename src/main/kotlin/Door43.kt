@@ -8,7 +8,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 class Door43 {
     val DOOR43_API_ENDPOINT = "https://api.door43.org/v3/"
     private var apiService : Door43ApiService
-    private var catalogMetadata: CatalogMetadata? = null
 
     init {
         // generate the retrofit instance and api service
