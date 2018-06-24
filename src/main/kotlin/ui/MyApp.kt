@@ -182,7 +182,8 @@ class MyView : View() {
             val chapterNumber = chapterInput.toInt()
             if (currentBook != null) {
                 currentChapter = currentBook!!.chapters[chapterNumber - 1]
-                val chapterText = currentChapter!!.text
+                // todo: add html/css to set font size and other styling
+                val chapterText = "${currentChapter!!.text}"
                 webView.engine.loadContent(chapterText)
             }
         } catch (err: NumberFormatException) {
