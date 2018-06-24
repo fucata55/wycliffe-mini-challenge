@@ -1,4 +1,3 @@
-import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXComboBox
 import dagger.DaggerSingletonComponent
 import dagger.ServiceModule
@@ -7,13 +6,7 @@ import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.fxml.FXML
-import javafx.scene.control.ComboBox
-import javafx.scene.control.TextArea
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.BorderPane
-import javafx.scene.text.Font
 import javafx.scene.web.WebView
 import tornadofx.*
 import javax.inject.Inject
@@ -47,6 +40,7 @@ class MyView : View() {
 
     // a bit of a hacky solution so that going to the previous book will load the last chapter
     var wasPrevious : Boolean = false
+    var fontSizeNum: Int = 16;
 
     var langsData : List<LanguageMetadata> = listOf()
     var langsNames : List<String> = listOf("Loading...")
@@ -208,6 +202,8 @@ class MyView : View() {
             val chapterNumber = chapterInput.toInt()
             if (currentBook != null) {
                 currentChapter = currentBook!!.chapters[chapterNumber - 1]
+                render();
+                /*
                 val chapterText =
                         "<html>\n" +
                                 "   <head>\n" +
@@ -224,10 +220,9 @@ class MyView : View() {
                                 "       ${currentChapter!!.text}" +
                                 "   </body>\n" +
                                 "</html>"
-                //webView: tornadoFX component that can display fxml like it's on a webpage
-                //engine.loadContent(blablabla): tell the rendering engine to display blablabla
-                //blablabla is an html string
+
                 webView.engine.loadContent(chapterText)
+                */
             }
         } catch (err: NumberFormatException) {
             // not a number selected
@@ -237,7 +232,7 @@ class MyView : View() {
     }
 
     fun processTextSizeChanged(textSizeInput: String) {
-        renderWithNewFontSize(textSizeInput)
+        newFontSize(textSizeInput)
     }
 
     fun nextChapter() {
@@ -280,8 +275,7 @@ class MyView : View() {
         nightView = !nightView
     }
 
-    fun renderWithNewFontSize(fontSize: String) {
-        var fontSizeNum: Int = 16;
+    fun newFontSize(fontSize: String) {
         if(fontSize == "Small Text") {
             println("small")
             fontSizeNum = 16;
@@ -292,6 +286,10 @@ class MyView : View() {
             println("large")
             fontSizeNum = 28;
         }
+        render()
+    }
+
+    fun render() {
         var chapterText =
                 "<html>\n" +
                         "   <head>\n" +
@@ -309,6 +307,10 @@ class MyView : View() {
                         "       ${currentChapter!!.text}" +
                         "   </body>\n" +
                         "</html>"
+        //webView: tornadoFX component that can display fxml like it's on a webpage
+        //engine.loadContent(blablabla): tell the rendering engine to display blablabla
+        //blablabla is an html string
         webView.engine.loadContent(chapterText)
+
     }
 }
