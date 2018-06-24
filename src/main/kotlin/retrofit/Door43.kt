@@ -9,6 +9,7 @@ import javax.inject.Singleton
 @Singleton
 // only one API connection
 // use dagger2 to inject api service
+//Inject is a dagger keyword that tells dagger to look at the following code and figure out what to pass along
 class Door43 @Inject constructor(var apiService: Door43ApiService) {
 
 

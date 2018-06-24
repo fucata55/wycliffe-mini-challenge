@@ -55,20 +55,8 @@
     </right>
     <bottom>
         <HBox alignment="CENTER">
-            <JFXButton fx:id="textBiggerButton"
-                       text="Bigger"
-                       onAction="#makeTextBigger">
-                <font>
-                    <Font size="20" />
-                </font>
-            </JFXButton>
-            <JFXButton fx:id="textSmallerButton"
-                       text="Smaller"
-                        onAction="#makeTextSmaller">
-                <font>
-                    <Font size="20" />
-                </font>
-            </JFXButton>
+            <JFXComboBox fx:id = "textSizeBox">
+            </JFXComboBox>
         </HBox>
     </bottom>
 

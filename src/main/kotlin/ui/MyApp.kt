@@ -20,8 +20,11 @@ import javax.inject.Inject
 import model.*
 import retrofit.Door43
 
+//this class represents the app itself
+//the first view is MyView; the view passed in is the view with which we start
 class MyApp: App(MyView::class)
 
+//this class is seperate from the MyApp class but we put them together so we could see them better
 class MyView : View() {
     // View() IS the controller. See TornadoFX lead dev
     // https://stackoverflow.com/questions/50977995/kotlin-fxml-file-controller/50978260
@@ -30,11 +33,13 @@ class MyView : View() {
     val selectedLang = SimpleStringProperty()
     val selectedBook = SimpleStringProperty()
     val selectedChap = SimpleStringProperty()
+    val selectedTextSize = SimpleStringProperty()
 
-    // elements from the FXML UI file
+    // pull in elements from the FXML UI file
     val langBox : JFXComboBox<String> by fxid()
     val bookBox : JFXComboBox<String> by fxid()
     val chapBox : JFXComboBox<String> by fxid()
+    val textSizeBox: JFXComboBox<String> by fxid()
     val webView : WebView by fxid()
 
     // a bit of a hacky solution so that going to the previous book will load the last chapter
@@ -51,10 +56,13 @@ class MyView : View() {
     var catalogDisposable : Disposable? = null
     var currentBookDisposable : Disposable? = null
 
-    // user dagger to inject door43
+    // use dagger to inject door43 (but wait until init block)
+    //note that inject only appears above declarations
     @Inject
     lateinit var door43 : Door43
 
+    //no functions can get run in the class outside of blocks and functions; you can only declare variables
+    //but the init block can contain functions and it runs right away automatically when the app is launched
     init {
         // set the window title
         title = "Door43 Scripture Reader"
@@ -67,6 +75,10 @@ class MyView : View() {
         setupComboBoxPropertyBindings() // bind the properties to the combo boxes
 
         loadCatalog() // load the door43 catalog
+
+        //puts items into textSizeBox because not dependent on what we get from catalog
+        //needs to be an observableList, a list of items that you can watch to see if they change
+        textSizeBox.items = FXCollections.observableList(listOf("1", "2", "3"));
     }
 
     private fun setupComboBoxPropertyBindings() {
@@ -74,7 +86,11 @@ class MyView : View() {
         langBox.bind(selectedLang)
         bookBox.bind(selectedBook)
         chapBox.bind(selectedChap)
+        textSizeBox.bind(selectedTextSize)
         // define the on Change handlers
+        //basically adding an on-change listener to each combobox
+        //except that the combobox automatically changes the variable that is bound to it
+        //and we are listening for change to that variable, not change to the combobox itself
         selectedLang.onChange {
             if (it != null) {
                 processLanguageChanged(it)
@@ -89,6 +105,11 @@ class MyView : View() {
         selectedChap.onChange {
             if (it != null) {
                 processChapterChanged(it)
+            }
+        }
+        selectedTextSize.onChange {
+            if (it!= null) {
+                processTextSizeChanged(it)
             }
         }
     }
@@ -191,6 +212,13 @@ class MyView : View() {
             // fail silently
         }
 
+    }
+
+    fun processTextSizeChanged(textSizeInput: String) {
+        //webView: tornadoFX component that can display fxml like it's on a webpage
+        //engine.loadContent(blablabla): tell the rendering engine to display blablabla
+        //blablabla is an html string
+        webView.engine.loadContent("hullo")
     }
 
     fun nextChapter() {
