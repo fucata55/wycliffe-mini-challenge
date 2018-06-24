@@ -37,10 +37,12 @@ class MyView : View() {
 
     //whether or not we are in night view
     var nightView = false;
+    var fontSizeNum: Int = 16;
+    var textBackColor = "white";
+    var textColor = "black";
 
     // a bit of a hacky solution so that going to the previous book will load the last chapter
     var wasPrevious : Boolean = false
-    var fontSizeNum: Int = 16;
 
     var langsData : List<LanguageMetadata> = listOf()
     var langsNames : List<String> = listOf("Loading...")
@@ -203,30 +205,9 @@ class MyView : View() {
             if (currentBook != null) {
                 currentChapter = currentBook!!.chapters[chapterNumber - 1]
                 render();
-                /*
-                val chapterText =
-                        "<html>\n" +
-                                "   <head>\n" +
-                                "       <style>\n" +
-                                "           body {\n" +
-                                "               font-family: sans-serif;\n" +
-                                "           }\n" +
-                                "           p {\n" +
-                                "               line-height: 2em;\n" +
-                                "           }\n" +
-                                "       </style>\n" +
-                                "   </head>\n" +
-                                "   <body>\n" +
-                                "       ${currentChapter!!.text}" +
-                                "   </body>\n" +
-                                "</html>"
-
-                webView.engine.loadContent(chapterText)
-                */
             }
         } catch (err: NumberFormatException) {
-            // not a number selected
-            // fail silently
+            println("ERROR")
         }
 
     }
@@ -267,11 +248,15 @@ class MyView : View() {
     }
 
     fun changeView() {
+        //change html, and change fxml
         if(nightView) {
-            webView.engine.loadContent("dayTime!")
+            textBackColor = "black";
+            textColor = "white";
         } else {
-            webView.engine.loadContent("nightTime!")
+            textBackColor = "white";
+            textColor = "black";
         }
+        render()
         nightView = !nightView
     }
 
@@ -296,6 +281,8 @@ class MyView : View() {
                         "       <style>\n" +
                         "           body {\n" +
                         "               font-family: sans-serif;\n" +
+                        "               background-color: $textBackColor;\n" +
+                        "               color: $textColor;\n" +
                         "           }\n" +
                         "           p {\n" +
                         "               line-height: 2em;\n" +
