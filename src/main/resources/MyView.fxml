@@ -54,7 +54,16 @@
         </VBox>
     </right>
     <bottom>
-        <HBox alignment="CENTER">
+        <HBox alignment="CENTER" spacing="30">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <JFXButton onAction = "#changeView">
+                <font>
+                    <Font size = "20" />
+                </font>
+                Day/Night
+            </JFXButton>
             <JFXComboBox fx:id = "textSizeBox">
             </JFXComboBox>
         </HBox>

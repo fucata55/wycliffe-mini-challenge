@@ -122,23 +122,9 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
                     // create the chapter object
                     thisChapterText += "</p>" // close the last paragraph
                     thisChapterText = """
-                                        <html>
-                                            <head>
-                                                <style>
-                                                    body {
-                                                        font-family: sans-serif;
-                                                    }
-                                                    p {
-                                                        line-height: 2em;
-                                                    }
-                                                </style>
-                                            </head>
-                                            <body>
-                                                <h1>$thisBookTitle $thisChapterNumber</h1>
-                                                $thisChapterText
-                                            </body>
-                                        </html>
-                                    """
+                        <h1>$thisBookTitle $thisChapterNumber</h1>
+                        $thisChapterText
+                        """
                     var chapter = Chapter(thisChapterNumber, thisChapterText.trimIndent())
                     thisBookChapters.add(chapter)
 

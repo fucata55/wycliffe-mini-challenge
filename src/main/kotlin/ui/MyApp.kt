@@ -42,6 +42,9 @@ class MyView : View() {
     val textSizeBox: JFXComboBox<String> by fxid()
     val webView : WebView by fxid()
 
+    //whether or not we are in night view
+    var nightView = false;
+
     // a bit of a hacky solution so that going to the previous book will load the last chapter
     var wasPrevious : Boolean = false
 
@@ -78,7 +81,7 @@ class MyView : View() {
 
         //puts items into textSizeBox because not dependent on what we get from catalog
         //needs to be an observableList, a list of items that you can watch to see if they change
-        textSizeBox.items = FXCollections.observableList(listOf("1", "2", "3"));
+        textSizeBox.items = FXCollections.observableList(listOf("Small Text", "Medium Text", "Large Text"));
     }
 
     private fun setupComboBoxPropertyBindings() {
@@ -87,6 +90,8 @@ class MyView : View() {
         bookBox.bind(selectedBook)
         chapBox.bind(selectedChap)
         textSizeBox.bind(selectedTextSize)
+        //choose small text by default
+        textSizeBox?.selectionModel?.select("Small Text")
         // define the on Change handlers
         //basically adding an on-change listener to each combobox
         //except that the combobox automatically changes the variable that is bound to it
@@ -204,7 +209,25 @@ class MyView : View() {
             if (currentBook != null) {
                 currentChapter = currentBook!!.chapters[chapterNumber - 1]
                 // todo: add html/css to set font size and other styling
-                val chapterText = "${currentChapter!!.text}"
+                val chapterText =
+                        "<html>\n" +
+                                "   <head>\n" +
+                                "       <style>\n" +
+                                "           body {\n" +
+                                "               font-family: sans-serif;\n" +
+                                "           }\n" +
+                                "           p {\n" +
+                                "               line-height: 2em;\n" +
+                                "           }\n" +
+                                "       </style>\n" +
+                                "   </head>\n" +
+                                "   <body>\n" +
+                                "       ${currentChapter!!.text}" +
+                                "   </body>\n" +
+                                "</html>"
+                //webView: tornadoFX component that can display fxml like it's on a webpage
+                //engine.loadContent(blablabla): tell the rendering engine to display blablabla
+                //blablabla is an html string
                 webView.engine.loadContent(chapterText)
             }
         } catch (err: NumberFormatException) {
@@ -215,10 +238,7 @@ class MyView : View() {
     }
 
     fun processTextSizeChanged(textSizeInput: String) {
-        //webView: tornadoFX component that can display fxml like it's on a webpage
-        //engine.loadContent(blablabla): tell the rendering engine to display blablabla
-        //blablabla is an html string
-        webView.engine.loadContent("hullo")
+        renderWithNewFontSize(textSizeInput)
     }
 
     fun nextChapter() {
@@ -252,15 +272,55 @@ class MyView : View() {
         }
     }
 
-    fun makeTextBigger() {
-        //val currentSize = textArea.font.size
-        //textArea.font = Font.font(currentSize + 5)
+    fun changeView() {
+        if(nightView) {
+            webView.engine.loadContent("dayTime!")
+        } else {
+            webView.engine.loadContent("nightTime!")
+        }
+        nightView = !nightView
     }
 
-    fun makeTextSmaller() {
-        //val currentSize = textArea.font.size
-        //textArea.font = Font.font(currentSize - 5)
+    fun renderWithNewFontSize(fontSize: String) {
+//        try {
+//            val sizeNumber = currentChapter
+//            if (sizeNumber != null) {
+//                currentChapter = currentBook!!.chapters[sizeNumber - 1]
+        var fontSizeNum: Int = 16;
+        if(fontSize == "Small Text") {
+            println("small")
+            fontSizeNum = 16;
+        } else if (fontSize == "Medium Text") {
+            println("medium")
+            fontSizeNum = 20;
+        } else if (fontSize == "Large Text") {
+            println("large")
+            fontSizeNum = 28;
+        }
+        var chapterText =
+                "<html>\n" +
+                        "   <head>\n" +
+                        "       <style>\n" +
+                        "           body {\n" +
+                        "               font-family: sans-serif;\n" +
+                        "           }\n" +
+                        "           p {\n" +
+                        "               line-height: 2em;\n" +
+                        "               font-size: $fontSizeNum;\n" +
+                        "           }\n" +
+                        "       </style>\n" +
+                        "   </head>\n" +
+                        "   <body>\n" +
+                        "       ${currentChapter!!.text}" +
+                        "   </body>\n" +
+                        "</html>"
+        webView.engine.loadContent(chapterText)
+    /*
     }
-
-
+        } catch (err: NumberFormatException) {
+            // not a number selected
+            println("ERROR: ")
+        }
+    */
+    }
 }
