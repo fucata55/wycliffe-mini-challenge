@@ -208,7 +208,6 @@ class MyView : View() {
             val chapterNumber = chapterInput.toInt()
             if (currentBook != null) {
                 currentChapter = currentBook!!.chapters[chapterNumber - 1]
-                // todo: add html/css to set font size and other styling
                 val chapterText =
                         "<html>\n" +
                                 "   <head>\n" +
@@ -282,10 +281,6 @@ class MyView : View() {
     }
 
     fun renderWithNewFontSize(fontSize: String) {
-//        try {
-//            val sizeNumber = currentChapter
-//            if (sizeNumber != null) {
-//                currentChapter = currentBook!!.chapters[sizeNumber - 1]
         var fontSizeNum: Int = 16;
         if(fontSize == "Small Text") {
             println("small")
@@ -315,12 +310,5 @@ class MyView : View() {
                         "   </body>\n" +
                         "</html>"
         webView.engine.loadContent(chapterText)
-    /*
-    }
-        } catch (err: NumberFormatException) {
-            // not a number selected
-            println("ERROR: ")
-        }
-    */
     }
 }
