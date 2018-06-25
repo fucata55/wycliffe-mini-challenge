@@ -237,7 +237,8 @@ class MyView : View() {
         if (currentBook != null && currentChapter != null) {
             // try to increment chapter number
             var nextChapterNumber = currentChapter!!.number - 1
-            if (nextChapterNumber <= 0) {
+            // make sure we don't go back from the first book
+            if (nextChapterNumber <= 0 && bookBox.selectedItem != bookBox.items[0]) {
                 // on to the previous book
                 wasPrevious = true
                 bookBox?.selectionModel?.selectPrevious()
