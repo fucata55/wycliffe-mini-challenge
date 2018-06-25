@@ -288,7 +288,7 @@ class MyView : View() {
                         "       <style>\n" +
                         "           @font-face {\n" +
                         "               font-family: NotoSans\n" +
-                        "               src:url(../../../fonts/NotoSans)\n" +
+                        "               src:url(../../resources/fonts/NotoSans)\n" +
                         "           }\n" +
                         "           html {\n" +
                         "               font-family: 'Noto Sans', sans-serif;\n" +
