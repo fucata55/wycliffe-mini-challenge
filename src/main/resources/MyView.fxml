@@ -15,7 +15,8 @@
 <?import javafx.scene.web.WebView?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            prefHeight="620" prefWidth="830" style="-fx-background-color:#63686B">
+            prefHeight="620" prefWidth="830"
+            stylesheets="main.css">
     <padding>
         <Insets left="15" right="15" />
     </padding>

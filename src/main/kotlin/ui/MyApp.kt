@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Font
 import javafx.scene.web.WebView
 import tornadofx.*
 import javax.inject.Inject
@@ -79,6 +80,10 @@ class MyView : View() {
         setupComboBoxPropertyBindings() // bind the properties to the combo boxes
 
         loadCatalog() // load the door43 catalog
+
+        root.style {
+            font = Font.loadFont(resources.stream("NotoSans-Regular.ttf"), 12.0)
+        }
 
         //puts items into textSizeBox because not dependent on what we get from catalog
         //needs to be an observableList, a list of items that you can watch to see if they change
@@ -288,7 +293,7 @@ class MyView : View() {
                         "       <style>\n" +
                         "           @font-face {\n" +
                         "               font-family: NotoSans\n" +
-                        "               src:url(../../../fonts/NotoSans)\n" +
+                        "               src:url(../../resources/NotoSans-Regular.ttf)\n" +
                         "           }\n" +
                         "           html {\n" +
                         "               font-family: 'Noto Sans', sans-serif;\n" +
