@@ -1,4 +1,5 @@
 import com.jfoenix.controls.JFXComboBox
+import com.sun.org.apache.bcel.internal.Repository.addClass
 import dagger.DaggerSingletonComponent
 import dagger.ServiceModule
 import io.reactivex.disposables.Disposable
@@ -12,16 +13,16 @@ import tornadofx.*
 import javax.inject.Inject
 import model.*
 import retrofit.Door43
-
 //this class represents the app itself
 //the first view is MyView; the view passed in is the view with which we start
 class MyApp: App(MyView::class)
+
 
 //this class is seperate from the MyApp class but we put them together so we could see them better
 class MyView : View() {
     // View() IS the controller. See TornadoFX lead dev
     // https://stackoverflow.com/questions/50977995/kotlin-fxml-file-controller/50978260
-    override val root : BorderPane by fxml("/MyView.fxml")
+    override val root : BorderPane  by fxml("/MyView.fxml")
 
     val selectedLang = SimpleStringProperty()
     val selectedBook = SimpleStringProperty()
@@ -249,9 +250,9 @@ class MyView : View() {
     }
 
     fun changeView() {
-        //change html, and change fxml
+        //change view colors to respond night reader mode
         if(!nightView) {
-            textBackColor = "black";
+            textBackColor = "#383838";
             textColor = "white";
         } else {
             textBackColor = "white";
