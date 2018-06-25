@@ -286,8 +286,14 @@ class MyView : View() {
                 "<html>\n" +
                         "   <head>\n" +
                         "       <style>\n" +
+                        "           @font-face {\n" +
+                        "               font-family: NotoSans\n" +
+                        "               src:url(../../../fonts/NotoSans)\n" +
+                        "           }\n" +
+                        "           html {\n" +
+                        "               font-family: 'Noto Sans', sans-serif;\n" +
+                        "           }\n" +
                         "           body {\n" +
-                        "               font-family: sans-serif;\n" +
                         "               background-color: $textBackColor;\n" +
                         "               color: $textColor;\n" +
                         "           }\n" +
