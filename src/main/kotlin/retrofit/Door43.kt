@@ -12,8 +12,6 @@ import javax.inject.Singleton
 //Inject is a dagger keyword that tells dagger to look at the following code and figure out what to pass along
 class Door43 @Inject constructor(var apiService: Door43ApiService) {
 
-
-
     fun fetchCatalog() : Observable<CatalogMetadata>  {
         // grab the catalog data from the API
         return apiService.getCatalog()
@@ -104,13 +102,13 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
 
     // parse the usfm file
     private fun parseUsfmBook(usfm: String): Book {
-        var lines = usfm.split("\n")
+        val lines = usfm.split("\n")
 
         // temporary variables to store data as we go
         var thisBookTitle = ""
         var thisChapterNumber = 0
         var thisChapterText = ""
-        var thisBookChapters = ArrayList<Chapter>()
+        val thisBookChapters = ArrayList<Chapter>()
 
         for (line in lines) {
             if (line.startsWith("\\h")) {
@@ -125,7 +123,7 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
                         <h1>$thisBookTitle $thisChapterNumber</h1>
                         $thisChapterText
                         """
-                    var chapter = Chapter(thisChapterNumber, thisChapterText.trimIndent())
+                    val chapter = Chapter(thisChapterNumber, thisChapterText.trimIndent())
                     thisBookChapters.add(chapter)
 
                     // remove chapter details
@@ -134,9 +132,9 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
                 thisChapterNumber += 1
             } else if (line.startsWith("\\v")) {
                 // show each verse on a new line
-                var verseNumber = line.removePrefix("\\v ")
+                val verseNumber = line.removePrefix("\\v ")
                         .substringBefore(" ")
-                var verseText = line.removePrefix("\\v ")
+                val verseText = line.removePrefix("\\v ")
                         .substringAfter(" ")
                         .replace(Regex("\\\\f.*\\\\f\\*"), "") // get rid of footnotes
                 thisChapterText += "<sup>$verseNumber</sup>$verseText "
@@ -146,8 +144,6 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
         }
 
         // create the book
-        var book = Book(thisBookTitle, thisBookChapters)
-
-        return book
+        return Book(thisBookTitle, thisBookChapters)
     }
 }

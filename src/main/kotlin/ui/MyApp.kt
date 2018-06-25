@@ -1,5 +1,4 @@
 import com.jfoenix.controls.JFXComboBox
-import com.sun.org.apache.bcel.internal.Repository.addClass
 import dagger.DaggerSingletonComponent
 import dagger.ServiceModule
 import io.reactivex.disposables.Disposable
@@ -13,6 +12,7 @@ import tornadofx.*
 import javax.inject.Inject
 import model.*
 import retrofit.Door43
+
 //this class represents the app itself
 //the first view is MyView; the view passed in is the view with which we start
 class MyApp: App(MyView::class)
@@ -24,37 +24,37 @@ class MyView : View() {
     // https://stackoverflow.com/questions/50977995/kotlin-fxml-file-controller/50978260
     override val root : BorderPane  by fxml("/MyView.fxml")
 
-    val selectedLang = SimpleStringProperty()
-    val selectedBook = SimpleStringProperty()
-    val selectedChap = SimpleStringProperty()
-    val selectedTextSize = SimpleStringProperty()
+    private val selectedLang = SimpleStringProperty()
+    private val selectedBook = SimpleStringProperty()
+    private val selectedChap = SimpleStringProperty()
+    private val selectedTextSize = SimpleStringProperty()
 
     // pull in elements from the FXML UI file
-    val langBox : JFXComboBox<String> by fxid()
-    val bookBox : JFXComboBox<String> by fxid()
-    val chapBox : JFXComboBox<String> by fxid()
-    val textSizeBox: JFXComboBox<String> by fxid()
-    val webView : WebView by fxid()
+    private val langBox : JFXComboBox<String> by fxid()
+    private val bookBox : JFXComboBox<String> by fxid()
+    private val chapBox : JFXComboBox<String> by fxid()
+    private val textSizeBox: JFXComboBox<String> by fxid()
+    private val webView : WebView by fxid()
 
     //whether or not we are in night view
-    var nightView = false;
-    var fontSizeNum: Int = 16;
-    var textBackColor = "white";
-    var textColor = "black";
+    private var nightView = false
+    private var fontSizeNum: Int = 16
+    private var textBackColor = "white"
+    private var textColor = "black"
 
     // a bit of a hacky solution so that going to the previous book will load the last chapter
-    var wasPrevious : Boolean = false
+    private var wasPrevious : Boolean = false
 
-    var langsData : List<LanguageMetadata> = listOf()
-    var langsNames : List<String> = listOf("Loading...")
+    private var langsData : List<LanguageMetadata> = listOf()
+    private var langsNames : List<String> = listOf("Loading...")
 
-    var currentBible : BibleMetadata? = null
-    var currentBook : Book? = null
-    var currentChapter: Chapter? = null
+    private var currentBible : BibleMetadata? = null
+    private var currentBook : Book? = null
+    private var currentChapter: Chapter? = null
 
     // todo: clean up disposables
-    var catalogDisposable : Disposable? = null
-    var currentBookDisposable : Disposable? = null
+    private var catalogDisposable : Disposable? = null
+    private var currentBookDisposable : Disposable? = null
 
     // use dagger to inject door43 (but wait until init block)
     //note that inject only appears above declarations
@@ -66,6 +66,10 @@ class MyView : View() {
     init {
         // set the window title
         title = "Door43 Scripture Reader"
+
+        // set minimum size
+        setWindowMinSize(600,400)
+
         // use dagger to inject Door43
         door43 = DaggerSingletonComponent.builder()
                 .serviceModule(ServiceModule())
@@ -78,7 +82,7 @@ class MyView : View() {
 
         //puts items into textSizeBox because not dependent on what we get from catalog
         //needs to be an observableList, a list of items that you can watch to see if they change
-        textSizeBox.items = FXCollections.observableList(listOf("Small Text", "Medium Text", "Large Text"));
+        textSizeBox.items = FXCollections.observableList(listOf("Small Text", "Medium Text", "Large Text"))
     }
 
     private fun setupComboBoxPropertyBindings() {
@@ -88,7 +92,7 @@ class MyView : View() {
         chapBox.bind(selectedChap)
         textSizeBox.bind(selectedTextSize)
         //choose small text by default
-        textSizeBox?.selectionModel?.select("Small Text")
+        textSizeBox.selectionModel?.select("Small Text")
         // define the on Change handlers
         //basically adding an on-change listener to each combobox
         //except that the combobox automatically changes the variable that is bound to it
@@ -128,44 +132,44 @@ class MyView : View() {
                     //(map does the same operation to each elem of the list, storing the result in a new list)
                     langsNames = langsData.map { it.title }
                     println(langsNames)
-                    langBox?.items = FXCollections.observableList(langsNames) // put the names in the box
-                    langBox?.isDisable = false // re enable the box
+                    langBox.items = FXCollections.observableList(langsNames) // put the names in the box
+                    langBox.isDisable = false // re enable the box
 
                     // load english as the default if available
                     if ("English" in langsNames)
                     {
-                        langBox?.selectionModel?.select("English")
+                        langBox.selectionModel?.select("English")
                     } else {
-                        langBox?.selectionModel?.selectFirst()
+                        langBox.selectionModel?.selectFirst()
                     }
                 },{
                     // on Error
-                    langBox?.items = FXCollections.observableList(listOf("Error"))
-                    langBox?.selectionModel?.selectFirst()
+                    langBox.items = FXCollections.observableList(listOf("Error"))
+                    langBox.selectionModel?.selectFirst()
                 })
     }
 
-    fun processLanguageChanged(languageTitle: String) {
+    private fun processLanguageChanged(languageTitle: String) {
         val theLanguage = langsData.filter { it.title == languageTitle }.firstOrNull()
         if (theLanguage != null) {
             currentBible = theLanguage.bibles["ulb"]
             if (currentBible != null) {
                 val bookNames = currentBible!!.books.map { it.title }
-                bookBox?.items = FXCollections.observableList(bookNames) // put books in the box
-                bookBox?.isDisable = false // re enable books
-                bookBox?.selectionModel?.selectFirst() // move to first book
+                bookBox.items = FXCollections.observableList(bookNames) // put books in the box
+                bookBox.isDisable = false // re enable books
+                bookBox.selectionModel?.selectFirst() // move to first book
             }
         }
     }
 
-    fun processBookChanged(bookTitle: String, previous: Boolean) {
+    private fun processBookChanged(bookTitle: String, previous: Boolean) {
         if (currentBible != null) {
-            chapBox?.items = FXCollections.observableList(listOf("Loading..."))
-            chapBox?.selectionModel?.selectFirst()
+            chapBox.items = FXCollections.observableList(listOf("Loading..."))
+            chapBox.selectionModel?.selectFirst()
 
             val thisBook = currentBible!!.books.filter { it.title == bookTitle }.firstOrNull()
             if (thisBook != null) {
-                chapBox?.isDisable = true // disable the box until the books are loaded
+                chapBox.isDisable = true // disable the box until the books are loaded
                 val currentBookObservable = door43.getBook(currentBible!!, thisBook.identifier)
                 if (currentBookObservable != null) {
                     currentBookDisposable = currentBookObservable
@@ -174,32 +178,32 @@ class MyView : View() {
                             .subscribe({
                                 currentBook = it
                                 val chapterNumbers = (1..currentBook!!.chapters.size).map { it.toString() }
-                                chapBox?.items = FXCollections.observableList(chapterNumbers)
-                                chapBox?.isDisable = false // re enable chapBox
+                                chapBox.items = FXCollections.observableList(chapterNumbers)
+                                chapBox.isDisable = false // re enable chapBox
 
                                 // figure out if we should load the first chapter
                                 // or if this is a result of arrowing to a previous book,
                                 // in which case we should load the last chapter
                                 if (previous)
                                 {
-                                    chapBox?.selectionModel?.selectLast()
+                                    chapBox.selectionModel?.selectLast()
                                 }
                                 else
                                 {
-                                    chapBox?.selectionModel?.selectFirst()
+                                    chapBox.selectionModel?.selectFirst()
                                 }
                             },{
                                 // on Error
                                 // handle it semi-gracefully
-                                chapBox?.items = FXCollections.observableList(listOf("Error"))
-                                chapBox?.selectionModel?.selectFirst()
+                                chapBox.items = FXCollections.observableList(listOf("Error"))
+                                chapBox.selectionModel?.selectFirst()
                             })
                 }
             }
         }
     }
 
-    fun processChapterChanged(chapterInput: String)
+    private fun processChapterChanged(chapterInput: String)
     {
         try {
             val chapterNumber = chapterInput.toInt()
@@ -214,20 +218,20 @@ class MyView : View() {
 
     }
 
-    fun processTextSizeChanged(textSizeInput: String) {
+    private fun processTextSizeChanged(textSizeInput: String) {
         newFontSize(textSizeInput)
     }
 
     fun nextChapter() {
         if (currentBook != null && currentChapter != null) {
             // try to increment chapter number
-            var nextChapterNumber = currentChapter!!.number + 1
+            val nextChapterNumber = currentChapter!!.number + 1
             if (nextChapterNumber > currentBook!!.chapters.size) {
                 // on to the next book
-                bookBox?.selectionModel?.selectNext()
+                bookBox.selectionModel?.selectNext()
             } else {
                 // we are good in this book
-                chapBox?.selectionModel?.selectNext()
+                chapBox.selectionModel?.selectNext()
             }
 
         }
@@ -236,15 +240,15 @@ class MyView : View() {
     fun previousChapter() {
         if (currentBook != null && currentChapter != null) {
             // try to increment chapter number
-            var nextChapterNumber = currentChapter!!.number - 1
+            val nextChapterNumber = currentChapter!!.number - 1
             // make sure we don't go back from the first book
             if (nextChapterNumber <= 0 && bookBox.selectedItem != bookBox.items[0]) {
                 // on to the previous book
                 wasPrevious = true
-                bookBox?.selectionModel?.selectPrevious()
+                bookBox.selectionModel?.selectPrevious()
             } else {
                 // we are good in this book
-                chapBox?.selectionModel?.selectPrevious()
+                chapBox.selectionModel?.selectPrevious()
             }
 
         }
@@ -253,32 +257,32 @@ class MyView : View() {
     fun changeView() {
         //change view colors to respond night reader mode
         if(!nightView) {
-            textBackColor = "#383838";
-            textColor = "white";
+            textBackColor = "#383838"
+            textColor = "white"
         } else {
-            textBackColor = "white";
-            textColor = "black";
+            textBackColor = "white"
+            textColor = "black"
         }
         render()
         nightView = !nightView
     }
 
-    fun newFontSize(fontSize: String) {
+    private fun newFontSize(fontSize: String) {
         if(fontSize == "Small Text") {
             println("small")
-            fontSizeNum = 16;
+            fontSizeNum = 16
         } else if (fontSize == "Medium Text") {
             println("medium")
-            fontSizeNum = 20;
+            fontSizeNum = 20
         } else if (fontSize == "Large Text") {
             println("large")
-            fontSizeNum = 28;
+            fontSizeNum = 28
         }
         render()
     }
 
-    fun render() {
-        var chapterText =
+    private fun render() {
+        val chapterText =
                 "<html>\n" +
                         "   <head>\n" +
                         "       <style>\n" +

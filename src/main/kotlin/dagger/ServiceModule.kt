@@ -15,10 +15,9 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
-//
 @Module
 class ServiceModule {
-    val DOOR43_API_ENDPOINT = "https://api.door43.org/v3/"
+    private val DOOR43_API_ENDPOINT = "https://api.door43.org/v3/"
 
     //tells dagger what to give any part of MyApp that asks for the API Service
     @Provides
