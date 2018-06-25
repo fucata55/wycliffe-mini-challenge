@@ -138,7 +138,7 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
                         .substringBefore(" ")
                 var verseText = line.removePrefix("\\v ")
                         .substringAfter(" ")
-                        .replace(Regex("/\\\\f.*\\\\f\\*/g"), "") // get rid of footnotes
+                        .replace(Regex("\\\\f.*\\\\f\\*"), "") // get rid of footnotes
                 thisChapterText += "<sup>$verseNumber</sup>$verseText "
             } else if (line.startsWith("\\p")) {
                 thisChapterText += "</p><p>"
