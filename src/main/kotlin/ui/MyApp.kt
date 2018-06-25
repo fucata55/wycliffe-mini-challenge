@@ -207,7 +207,8 @@ class MyView : View() {
                 render();
             }
         } catch (err: NumberFormatException) {
-            println("ERROR")
+            // not a number selected
+            // fail silently
         }
 
     }
@@ -249,7 +250,7 @@ class MyView : View() {
 
     fun changeView() {
         //change html, and change fxml
-        if(nightView) {
+        if(!nightView) {
             textBackColor = "black";
             textColor = "white";
         } else {
