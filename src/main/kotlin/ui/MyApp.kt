@@ -44,7 +44,7 @@ class MyView : View() {
 
     //whether or not we are in night view
     private var nightView = false
-    private var fontSizeNum: Int = 28
+    private var fontSizeNum: Int = 22
     private var textBackColor = "white"
     private var textColor = "black"
 
@@ -89,7 +89,7 @@ class MyView : View() {
 
         //puts items into textSizeBox because not dependent on what we get from catalog
         //needs to be an observableList, a list of items that you can watch to see if they change
-        textSizeBox.items = FXCollections.observableList(listOf("Small Text", "Medium Text", "Large Text"))
+        textSizeBox.items = FXCollections.observableList(listOf("Very Small Text", "Small Text", "Medium Text", "Large Text"))
     }
 
     private fun setupComboBoxPropertyBindings() {
@@ -144,7 +144,7 @@ class MyView : View() {
                     //gets just names of languages as strings
                     //(map does the same operation to each elem of the list, storing the result in a new list)
                     langsNames = langsData.map { it.title }
-                    println(langsNames)
+//                    println(langsNames)
                     langBox.items = FXCollections.observableList(langsNames) // put the names in the box
                     langBox.isDisable = false // re enable the box
 
@@ -309,11 +309,13 @@ class MyView : View() {
 
     private fun newFontSize(fontSize: String) {
         if(fontSize == "Small Text") {
-            fontSizeNum = 28
+            fontSizeNum = 22
         } else if (fontSize == "Medium Text") {
-            fontSizeNum = 32
+            fontSizeNum = 28
         } else if (fontSize == "Large Text") {
-            fontSizeNum = 42
+            fontSizeNum = 32
+        } else if (fontSize == "Very Small Text") {
+            fontSizeNum = 16
         }
         render()
     }
