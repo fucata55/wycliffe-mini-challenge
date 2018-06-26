@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
         val languages = catalog.getLanguageList() // gets a list of the available languages
 
         // each language object has information like the identifier, title, and list of available Bibles
-        println("Language Sample: " + languages[0].title + " (" + languages[0].identifier + ") \n")
+//        println("Language Sample: " + languages[0].title + " (" + languages[0].identifier + ") \n")
 
         // alternatively, you can directly get all the Bibles for a language if you
         // know the identifier/slug
@@ -37,8 +37,8 @@ fun main(args: Array<String>) {
             if (book != null) {
                 val chapter = book.chapters[0]
                 // print the chapter information
-                println(bookTitle + " " + chapter.number)
-                println(chapter.text)
+//                println(bookTitle + " " + chapter.number)
+//                println(chapter.text)
             }
         }
     }
