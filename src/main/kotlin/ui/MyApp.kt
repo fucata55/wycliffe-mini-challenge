@@ -1,4 +1,5 @@
 import com.jfoenix.controls.JFXComboBox
+import com.jfoenix.controls.JFXTextArea
 import dagger.DaggerSingletonComponent
 import dagger.ServiceModule
 import io.reactivex.disposables.Disposable
@@ -6,7 +7,9 @@ import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
+import javafx.geometry.NodeOrientation
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Font
 import javafx.scene.web.WebView
 import tornadofx.*
 import javax.inject.Inject
@@ -26,14 +29,16 @@ class MyView : View() {
     private val selectedLang = SimpleStringProperty()
     private val selectedBook = SimpleStringProperty()
     private val selectedChap = SimpleStringProperty()
+    private val selectedVersion = SimpleStringProperty()
     private val selectedTextSize = SimpleStringProperty()
 
     // pull in elements from the FXML UI file
     private val langBox : JFXComboBox<String> by fxid()
+    private val versionBox : JFXComboBox<String> by fxid()
     private val bookBox : JFXComboBox<String> by fxid()
     private val chapBox : JFXComboBox<String> by fxid()
     private val textSizeBox: JFXComboBox<String> by fxid()
-    private val webView : WebView by fxid()
+    private val textArea : JFXTextArea by fxid()
 
     //whether or not we are in night view
     private var nightView = false
@@ -48,6 +53,7 @@ class MyView : View() {
     private var langsNames : List<String> = listOf("Loading...")
 
     private var currentBible : BibleMetadata? = null
+    private var currentLanguage : LanguageMetadata? = null
     private var currentBook : Book? = null
     private var currentChapter: Chapter? = null
 
@@ -88,6 +94,7 @@ class MyView : View() {
     private fun setupComboBoxPropertyBindings() {
         // bind the properties
         langBox.bind(selectedLang)
+        versionBox.bind(selectedVersion)
         bookBox.bind(selectedBook)
         chapBox.bind(selectedChap)
         textSizeBox.bind(selectedTextSize)
@@ -100,6 +107,11 @@ class MyView : View() {
         selectedLang.onChange {
             if (it != null) {
                 processLanguageChanged(it)
+            }
+        }
+        selectedVersion.onChange {
+            if (it != null) {
+                processVersionChanged(it)
             }
         }
         selectedBook.onChange {
@@ -144,15 +156,25 @@ class MyView : View() {
                     }
                 },{
                     // on Error
+                    it.printStackTrace()
                     langBox.items = FXCollections.observableList(listOf("Error"))
                     langBox.selectionModel?.selectFirst()
                 })
     }
 
     private fun processLanguageChanged(languageTitle: String) {
-        val theLanguage = langsData.filter { it.title == languageTitle }.firstOrNull()
-        if (theLanguage != null) {
-            currentBible = theLanguage.bibles["ulb"]
+        currentLanguage = langsData.filter { it.title == languageTitle }.firstOrNull()
+        if (currentLanguage != null) {
+            val versionNames = currentLanguage!!.bibles.keys.toList()
+            versionBox.items = FXCollections.observableList(versionNames)
+            versionBox.isDisable = false
+            versionBox.selectionModel?.selectFirst()
+        }
+    }
+
+    private fun processVersionChanged(versionTitle: String) {
+        if (currentLanguage != null) {
+            currentBible = currentLanguage!!.bibles[versionTitle]
             if (currentBible != null) {
                 val bookNames = currentBible!!.books.map { it.title }
                 bookBox.items = FXCollections.observableList(bookNames) // put books in the box
@@ -283,29 +305,17 @@ class MyView : View() {
     }
 
     private fun render() {
-        val chapterText =
-                "<html>\n" +
-                        "   <head>\n" +
-                        "       <style>\n" +
-                        "           body {\n" +
-                        "               font-family: sans-serif;\n" +
-                        "               background-color: $textBackColor;\n" +
-                        "               color: $textColor;\n" +
-                        "           }\n" +
-                        "           p {\n" +
-                        "               line-height: 2em;\n" +
-                        "               font-size: $fontSizeNum;\n" +
-                        "           }\n" +
-                        "       </style>\n" +
-                        "   </head>\n" +
-                        "   <body>\n" +
-                        "       ${currentChapter!!.text}" +
-                        "   </body>\n" +
-                        "</html>"
         //webView: tornadoFX component that can display fxml like it's on a webpage
         //engine.loadContent(blablabla): tell the rendering engine to display blablabla
         //blablabla is an html string
-        webView.engine.loadContent(chapterText)
+        textArea.text = currentChapter?.text
+        textArea.font = Font.font(fontSizeNum.toDouble())
+        if (currentLanguage?.direction == "ltr") {
+            root.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
+        } else {
+            root.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
+            root.bottom.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
+        }
 
     }
 }
