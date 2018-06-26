@@ -311,9 +311,10 @@ class MyView : View() {
         textArea.text = currentChapter?.text
         textArea.font = Font.font(fontSizeNum.toDouble())
         if (currentLanguage?.direction == "ltr") {
-            textArea.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
+            root.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
         } else {
-            textArea.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
+            root.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
+            root.bottom.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
         }
 
     }

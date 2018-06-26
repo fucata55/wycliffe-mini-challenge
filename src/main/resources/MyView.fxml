@@ -40,7 +40,7 @@
         </JFXTextArea>
     </center>
     <bottom>
-        <HBox alignment="CENTER" spacing="30">
+        <HBox alignment="CENTER" spacing="30" nodeOrientation="LEFT_TO_RIGHT">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
