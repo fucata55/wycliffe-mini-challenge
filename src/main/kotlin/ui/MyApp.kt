@@ -8,8 +8,10 @@ import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.geometry.NodeOrientation
+import javafx.scene.control.ListCell
 import javafx.scene.layout.BorderPane
 import javafx.scene.text.Font
+import javafx.scene.text.FontWeight
 import javafx.scene.web.WebView
 import tornadofx.*
 import javax.inject.Inject
@@ -67,6 +69,13 @@ class MyView : View() {
     //note that inject only appears above declarations
     @Inject
     lateinit var door43 : Door43
+
+    // create a hash of the language font paths
+    private val LANG_FONT_PATHS = hashMapOf<String, String>(
+            "en" to "../../resources/NotoSans-Regular.ttf",
+            "or" to "../../resources/NotoSansOriya-Regular.ttf",
+            "ar" to "../../resources/NotoSansArabic-Regular.ttf")
+    private val langFontCache = hashMapOf<String, Font>()
 
     //no functions can get run in the class outside of blocks and functions; you can only declare variables
     //but the init block can contain functions and it runs right away automatically when the app is launched
@@ -144,9 +153,20 @@ class MyView : View() {
                     //gets just names of languages as strings
                     //(map does the same operation to each elem of the list, storing the result in a new list)
                     langsNames = langsData.map { it.title }
+                    var langsIds = langsData.map { it.identifier }
+                    var languageFonts = langsIds.map { loadFontForLanguage(it) }
                     println(langsNames)
                     langBox.items = FXCollections.observableList(langsNames) // put the names in the box
                     langBox.isDisable = false // re enable the box
+
+                    langBox.cellFormat {
+                        text = it
+                        println(langsData.filter { it.title == item }.first().identifier)
+                        font = loadFontForLanguage(langsData.filter { it.title == item }.first().identifier)
+                        println(font)
+                    }
+
+                    println(langFontCache)
 
                     // load english as the default if available
                     if ("English" in langsNames)
@@ -167,22 +187,8 @@ class MyView : View() {
         currentLanguage = langsData.filter { it.title == languageTitle }.firstOrNull()
         if (currentLanguage != null) {
             //check if it is oriya or arabic and load appropriate font if so
-            when(currentLanguage!!.identifier) {
-                "or" -> {
-                    var NotoOr = loadFont("../../resources/NotoSansOriya-Regular.ttf", fontSizeNum);
-                    textArea.font = NotoOr;
-                    render();
-                }
-                "ar" -> {
-                    var NotoOr = loadFont("../../resources/NotoSansArabic-ExtraCondensedLight.ttf", fontSizeNum);
-                    textArea.font = NotoOr;
-                    render();
-                }
-                else -> {
-                    textArea.font = Font.font("System Regular", fontSizeNum.toDouble());
-                }
-            }
-
+            textArea.font = loadFontForLanguage(currentLanguage!!.identifier)
+            render()
             val versionNames = currentLanguage!!.bibles.keys.toList()
             versionBox.items = FXCollections.observableList(versionNames)
             versionBox.isDisable = false
@@ -332,5 +338,22 @@ class MyView : View() {
             textArea.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
         }
 
+    }
+
+    private fun loadFontForLanguage(languageIdentifier: String) : Font {
+        if (!langFontCache.containsKey(languageIdentifier)) {
+            // we do not have this Font cached
+            try {
+                var font = loadFont(
+                        LANG_FONT_PATHS[languageIdentifier].orEmpty(),
+                        Font.getDefault().size)
+                if (font != null) {
+                    langFontCache[languageIdentifier] = font
+                }
+            } catch (e: Exception) {
+                langFontCache[languageIdentifier] = Font.getDefault()
+            }
+        }
+        return langFontCache.getOrDefault(languageIdentifier, Font.getDefault())
     }
 }
