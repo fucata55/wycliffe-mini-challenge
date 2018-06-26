@@ -286,18 +286,18 @@ class MyView : View() {
         render()
     }
 
+//    "           @font-face {\n" +
+//    "               font-family: NotoSans\n" +
+//    "               src:url(../../resources/NotoSans-Regular.ttf)\n" +
+//    "           }\n" +
+//    "           html {\n" +
+//    "               font-family: 'Noto Sans', sans-serif;\n" +
+//    "           }\n" +
     private fun render() {
         val chapterText =
-                "<html>\n" +
+                "<html lang=\"or\">\n" +
                         "   <head>\n" +
                         "       <style>\n" +
-                        "           @font-face {\n" +
-                        "               font-family: NotoSans\n" +
-                        "               src:url(../../resources/NotoSans-Regular.ttf)\n" +
-                        "           }\n" +
-                        "           html {\n" +
-                        "               font-family: 'Noto Sans', sans-serif;\n" +
-                        "           }\n" +
                         "           body {\n" +
                         "               background-color: $textBackColor;\n" +
                         "               color: $textColor;\n" +
