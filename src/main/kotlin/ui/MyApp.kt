@@ -15,6 +15,8 @@ import tornadofx.*
 import javax.inject.Inject
 import model.*
 import retrofit.Door43
+import java.util.*
+
 //this class represents the app itself
 //the first view is MyView; the view passed in is the view with which we start
 class MyApp: App(MyView::class)
@@ -66,10 +68,16 @@ class MyView : View() {
     @Inject
     lateinit var door43 : Door43
 
+    // create a hash of the language font paths
+    private val LANG_FONT_PATHS = hashMapOf<String, String>(
+            "en" to "../../resources/NotoSans-Regular.ttf",
+            "or" to "../../resources/NotoSansOriya-Regular.ttf",
+            "ar" to "../../resources/NotoSansArabic-Regular.ttf")
+    private val langFontCache = hashMapOf<String, Font>()
+
     //no functions can get run in the class outside of blocks and functions; you can only declare variables
     //but the init block can contain functions and it runs right away automatically when the app is launched
     init {
-
         // set the window title
         title = "Door43 Scripture Reader"
 
@@ -165,6 +173,9 @@ class MyView : View() {
     private fun processLanguageChanged(languageTitle: String) {
         currentLanguage = langsData.filter { it.title == languageTitle }.firstOrNull()
         if (currentLanguage != null) {
+            //check if it is oriya or arabic and load appropriate font if so
+            textArea.font = loadFontForLanguage(currentLanguage!!.identifier)
+            render()
             val versionNames = currentLanguage!!.bibles.keys.toList()
             versionBox.items = FXCollections.observableList(versionNames)
             versionBox.isDisable = false
@@ -309,13 +320,31 @@ class MyView : View() {
         //engine.loadContent(blablabla): tell the rendering engine to display blablabla
         //blablabla is an html string
         textArea.text = currentChapter?.text
-        textArea.font = Font.font(fontSizeNum.toDouble())
+//        println("font before assignment in render " + textArea.font);
+        textArea.font = Font.font(textArea.font.family, fontSizeNum.toDouble())
+//        println("font afterward " + textArea.font);
         if (currentLanguage?.direction == "ltr") {
-            root.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
+            textArea.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
         } else {
-            root.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
-            root.bottom.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
+            textArea.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
         }
 
+    }
+
+    private fun loadFontForLanguage(languageIdentifier: String) : Font {
+        if (!langFontCache.containsKey(languageIdentifier)) {
+            // we do not have this Font cached
+            try {
+                var font = loadFont(
+                        LANG_FONT_PATHS[languageIdentifier].orEmpty(),
+                        Font.getDefault().size)
+                if (font != null) {
+                    langFontCache[languageIdentifier] = font
+                }
+            } catch (e: Exception) {
+                langFontCache[languageIdentifier] = Font.getDefault()
+            }
+        }
+        return langFontCache.getOrDefault(languageIdentifier, Font.getDefault())
     }
 }
