@@ -169,12 +169,12 @@ class MyView : View() {
             //check if it is oriya or arabic and load appropriate font if so
             when(currentLanguage!!.identifier) {
                 "or" -> {
-                    var NotoOr = loadFont("..\\..\\resources\\NotoSansOriya-Regular.ttf", fontSizeNum);
+                    var NotoOr = loadFont("../../resources/NotoSansOriya-Regular.ttf", fontSizeNum);
                     textArea.font = NotoOr;
                     render();
                 }
                 "ar" -> {
-                    var NotoOr = loadFont("..\\..\\resources\\NotoSansArabic-ExtraCondensedLight.ttf", fontSizeNum);
+                    var NotoOr = loadFont("../../resources/NotoSansArabic-ExtraCondensedLight.ttf", fontSizeNum);
                     textArea.font = NotoOr;
                     render();
                 }
