@@ -1,4 +1,5 @@
 import com.jfoenix.controls.JFXComboBox
+import com.jfoenix.controls.JFXTextArea
 import dagger.DaggerSingletonComponent
 import dagger.ServiceModule
 import io.reactivex.disposables.Disposable
@@ -7,6 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Font
 import javafx.scene.web.WebView
 import tornadofx.*
 import javax.inject.Inject
@@ -34,7 +36,7 @@ class MyView : View() {
     private val bookBox : JFXComboBox<String> by fxid()
     private val chapBox : JFXComboBox<String> by fxid()
     private val textSizeBox: JFXComboBox<String> by fxid()
-    private val webView : WebView by fxid()
+    private val textArea : JFXTextArea by fxid()
 
     //whether or not we are in night view
     private var nightView = false
@@ -282,29 +284,11 @@ class MyView : View() {
     }
 
     private fun render() {
-        val chapterText =
-                "<html>\n" +
-                        "   <head>\n" +
-                        "       <style>\n" +
-                        "           body {\n" +
-                        "               font-family: sans-serif;\n" +
-                        "               background-color: $textBackColor;\n" +
-                        "               color: $textColor;\n" +
-                        "           }\n" +
-                        "           p {\n" +
-                        "               line-height: 2em;\n" +
-                        "               font-size: $fontSizeNum;\n" +
-                        "           }\n" +
-                        "       </style>\n" +
-                        "   </head>\n" +
-                        "   <body>\n" +
-                        "       ${currentChapter!!.text}" +
-                        "   </body>\n" +
-                        "</html>"
         //webView: tornadoFX component that can display fxml like it's on a webpage
         //engine.loadContent(blablabla): tell the rendering engine to display blablabla
         //blablabla is an html string
-        webView.engine.loadContent(chapterText)
+        textArea.text = currentChapter?.text
+        textArea.font = Font.font(fontSizeNum.toDouble())
 
     }
 }

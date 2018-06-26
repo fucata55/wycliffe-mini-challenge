@@ -33,9 +33,9 @@
         </HBox>
     </top>
     <center>
-        <WebView fx:id="webView">
+        <JFXTextArea fx:id="textArea">
 
-        </WebView>
+        </JFXTextArea>
     </center>
     <bottom>
         <HBox alignment="CENTER" spacing="30">

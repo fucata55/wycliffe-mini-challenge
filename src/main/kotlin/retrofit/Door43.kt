@@ -118,12 +118,8 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
                 if (thisChapterNumber > 0) {
                     // we have at least one whole chapter
                     // create the chapter object
-                    thisChapterText += "</p>" // close the last paragraph
-                    thisChapterText = """
-                        <h1>$thisBookTitle $thisChapterNumber</h1>
-                        $thisChapterText
-                        """
-                    val chapter = Chapter(thisChapterNumber, thisChapterText.trimIndent())
+                    thisChapterText = "$thisBookTitle $thisChapterNumber \n $thisChapterText"
+                    val chapter = Chapter(thisChapterNumber, thisChapterText)
                     thisBookChapters.add(chapter)
 
                     // remove chapter details
@@ -132,14 +128,9 @@ class Door43 @Inject constructor(var apiService: Door43ApiService) {
                 thisChapterNumber += 1
             } else if (line.startsWith("\\v")) {
                 // show each verse on a new line
-                val verseNumber = line.removePrefix("\\v ")
-                        .substringBefore(" ")
-                val verseText = line.removePrefix("\\v ")
-                        .substringAfter(" ")
-                        .replace(Regex("\\\\f.*\\\\f\\*"), "") // get rid of footnotes
-                thisChapterText += "<sup>$verseNumber</sup>$verseText "
+               thisChapterText += line.removePrefix("\\v") + " "
             } else if (line.startsWith("\\p")) {
-                thisChapterText += "</p><p>"
+                thisChapterText += "\n\n"
             }
         }
 
