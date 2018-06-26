@@ -8,10 +8,8 @@ import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.geometry.NodeOrientation
-import javafx.scene.control.ListCell
 import javafx.scene.layout.BorderPane
 import javafx.scene.text.Font
-import javafx.scene.text.FontWeight
 import javafx.scene.web.WebView
 import tornadofx.*
 import javax.inject.Inject
