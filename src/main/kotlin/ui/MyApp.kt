@@ -12,10 +12,16 @@ import tornadofx.*
 import javax.inject.Inject
 import model.*
 import retrofit.Door43
+import tornadofx.FX.Companion.locale
+import java.util.*
 
 //this class represents the app itself
 //the first view is MyView; the view passed in is the view with which we start
-class MyApp: App(MyView::class)
+class MyApp: App(MyView::class) {
+    init {
+        println(FX.locale);
+    }
+}
 
 
 //this class is seperate from the MyApp class but we put them together so we could see them better
@@ -64,6 +70,7 @@ class MyView : View() {
     //no functions can get run in the class outside of blocks and functions; you can only declare variables
     //but the init block can contain functions and it runs right away automatically when the app is launched
     init {
+
         // set the window title
         title = "Door43 Scripture Reader"
 
