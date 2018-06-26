@@ -44,7 +44,7 @@ class MyView : View() {
 
     //whether or not we are in night view
     private var nightView = false
-    private var fontSizeNum: Int = 16
+    private var fontSizeNum: Int = 28
     private var textBackColor = "white"
     private var textColor = "black"
 
@@ -166,6 +166,23 @@ class MyView : View() {
     private fun processLanguageChanged(languageTitle: String) {
         currentLanguage = langsData.filter { it.title == languageTitle }.firstOrNull()
         if (currentLanguage != null) {
+            //check if it is oriya or arabic and load appropriate font if so
+            when(currentLanguage!!.identifier) {
+                "or" -> {
+                    var NotoOr = loadFont("..\\..\\resources\\NotoSansOriya-Regular.ttf", fontSizeNum);
+                    textArea.font = NotoOr;
+                    render();
+                }
+                "ar" -> {
+                    var NotoOr = loadFont("..\\..\\resources\\NotoSansArabic-ExtraCondensedLight.ttf", fontSizeNum);
+                    textArea.font = NotoOr;
+                    render();
+                }
+                else -> {
+                    textArea.font = Font.font("System Regular", fontSizeNum.toDouble());
+                }
+            }
+
             val versionNames = currentLanguage!!.bibles.keys.toList()
             versionBox.items = FXCollections.observableList(versionNames)
             versionBox.isDisable = false
@@ -292,14 +309,11 @@ class MyView : View() {
 
     private fun newFontSize(fontSize: String) {
         if(fontSize == "Small Text") {
-            println("small")
-            fontSizeNum = 16
-        } else if (fontSize == "Medium Text") {
-            println("medium")
-            fontSizeNum = 20
-        } else if (fontSize == "Large Text") {
-            println("large")
             fontSizeNum = 28
+        } else if (fontSize == "Medium Text") {
+            fontSizeNum = 32
+        } else if (fontSize == "Large Text") {
+            fontSizeNum = 42
         }
         render()
     }
@@ -309,7 +323,9 @@ class MyView : View() {
         //engine.loadContent(blablabla): tell the rendering engine to display blablabla
         //blablabla is an html string
         textArea.text = currentChapter?.text
-        textArea.font = Font.font(fontSizeNum.toDouble())
+//        println("font before assignment in render " + textArea.font);
+        textArea.font = Font.font(textArea.font.family, fontSizeNum.toDouble())
+//        println("font afterward " + textArea.font);
         if (currentLanguage?.direction == "ltr") {
             textArea.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
         } else {
