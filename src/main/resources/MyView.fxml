@@ -45,7 +45,8 @@
             <JFXButton buttonType="RAISED" text="&lt;"
                        style="-fx-font-size:20px; -fx-background-color:#71C2B9; -fx-text-fill:white" onAction="#previousChapter">
             </JFXButton>
-            <JFXToggleButton onAction = "#changeView" text = "%nightReaderMode">
+            <JFXToggleButton onAction = "#changeView">
+                Night Reader Mode
             </JFXToggleButton>
             <JFXComboBox fx:id = "textSizeBox">
             </JFXComboBox>
