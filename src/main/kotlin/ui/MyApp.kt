@@ -19,7 +19,7 @@ import java.util.*
 //the first view is MyView; the view passed in is the view with which we start
 class MyApp: App(MyView::class) {
     init {
-        println(FX.locale);
+        FX.locale = Locale("es");
     }
 }
 
