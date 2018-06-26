@@ -292,13 +292,13 @@ class MyView : View() {
                         "   <head>\n" +
                         "       <style>\n" +
                         "           @font-face {\n"+
-                        "               font-family: 'Noto Sans';\n"+
+                        "               font-family: 'Noto Naskh Arabic';\n"+
                         "               font-style: normal;\n"+
                         "               font-weight: 400;\n"+
-                        "               url('../../resources/noto-sans-v7-greek-ext_latin-ext_cyrillic-ext_vietnamese_greek_latin_devanagari_cyrillic-regular.ttf') format('truetype');\n" +
+                        "               url('../../resources/NotoNaskhArabicUI-Regular.ttf') format('truetype');\n" +
                         "           }\n" +
                         "           * {\n" +
-                        "               font-family: 'Noto Sans', sans-serif;\n" +
+                        "               font-family: 'Noto Naskh Arabic', sans-serif;\n" +
                         "           }\n" +
                         "           body {\n" +
                         "               background-color: $textBackColor;\n" +
