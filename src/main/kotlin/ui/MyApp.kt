@@ -12,9 +12,6 @@ import tornadofx.*
 import javax.inject.Inject
 import model.*
 import retrofit.Door43
-import tornadofx.FX.Companion.locale
-import java.util.*
-
 //this class represents the app itself
 //the first view is MyView; the view passed in is the view with which we start
 class MyApp: App(MyView::class)
@@ -79,13 +76,13 @@ class MyView : View() {
                 .build()
                 .door43()
 
+        textSizeBox.items = FXCollections.observableList(listOf(messages["smallText"], messages["mediumText"], messages["largeText"]))
         setupComboBoxPropertyBindings() // bind the properties to the combo boxes
 
         loadCatalog() // load the door43 catalog
 
         //puts items into textSizeBox because not dependent on what we get from catalog
         //needs to be an observableList, a list of items that you can watch to see if they change
-        textSizeBox.items = FXCollections.observableList(listOf("Small Text", "Medium Text", "Large Text"))
     }
 
     private fun setupComboBoxPropertyBindings() {
@@ -95,7 +92,7 @@ class MyView : View() {
         chapBox.bind(selectedChap)
         textSizeBox.bind(selectedTextSize)
         //choose small text by default
-        textSizeBox.selectionModel?.select("Small Text")
+        textSizeBox.selectionModel?.selectFirst()
         // define the on Change handlers
         //basically adding an on-change listener to each combobox
         //except that the combobox automatically changes the variable that is bound to it
@@ -271,13 +268,14 @@ class MyView : View() {
     }
 
     private fun newFontSize(fontSize: String) {
-        if(fontSize == "Small Text") {
+        println(fontSize)
+        if(fontSize == messages["smallText"]) {
             println("small")
             fontSizeNum = 16
-        } else if (fontSize == "Medium Text") {
+        } else if (fontSize == messages["mediumText"]) {
             println("medium")
             fontSizeNum = 20
-        } else if (fontSize == "Large Text") {
+        } else if (fontSize == messages["largeText"]) {
             println("large")
             fontSizeNum = 28
         }
