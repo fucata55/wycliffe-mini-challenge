@@ -17,11 +17,7 @@ import java.util.*
 
 //this class represents the app itself
 //the first view is MyView; the view passed in is the view with which we start
-class MyApp: App(MyView::class) {
-    init {
-        FX.locale = Locale("es");
-    }
-}
+class MyApp: App(MyView::class)
 
 
 //this class is seperate from the MyApp class but we put them together so we could see them better
