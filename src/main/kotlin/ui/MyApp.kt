@@ -1,3 +1,4 @@
+import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXComboBox
 import com.jfoenix.controls.JFXTextArea
 import dagger.DaggerSingletonComponent
@@ -41,6 +42,8 @@ class MyView : View() {
     private val chapBox : JFXComboBox<String> by fxid()
     private val textSizeBox: JFXComboBox<String> by fxid()
     private val textArea : JFXTextArea by fxid()
+    private val firstAlligator : JFXButton by fxid()
+    private val secondAlligator : JFXButton by fxid()
 
     //whether or not we are in night view
     private var nightView = false
@@ -320,13 +323,17 @@ class MyView : View() {
         //engine.loadContent(blablabla): tell the rendering engine to display blablabla
         //blablabla is an html string
         textArea.text = currentChapter?.text
-//        println("font before assignment in render " + textArea.font);
         textArea.font = Font.font(textArea.font.family, fontSizeNum.toDouble())
-//        println("font afterward " + textArea.font);
         if (currentLanguage?.direction == "ltr") {
-            textArea.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
+            root.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
+            root.bottom.nodeOrientation = NodeOrientation.LEFT_TO_RIGHT
+            firstAlligator.text = "<";
+            secondAlligator.text = ">";
         } else {
-            textArea.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
+            root.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
+            root.bottom.nodeOrientation = NodeOrientation.RIGHT_TO_LEFT
+            firstAlligator.text = ">";
+            secondAlligator.text = "<";
         }
 
     }

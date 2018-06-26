@@ -40,19 +40,21 @@
         </JFXTextArea>
     </center>
     <bottom>
-        <HBox alignment="CENTER" spacing="30" nodeOrientation="LEFT_TO_RIGHT">
+        <HBox alignment="CENTER" spacing="30">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            <JFXButton buttonType="RAISED" text="&lt;"
-                       style="-fx-font-size:20px; -fx-background-color:#71C2B9; -fx-text-fill:white" onAction="#previousChapter">
+            <JFXButton buttonType="RAISED"
+                       style="-fx-font-size:20px; -fx-background-color:#71C2B9; -fx-text-fill:white" onAction="#previousChapter"
+                        fx:id = "firstAlligator">
             </JFXButton>
             <JFXToggleButton onAction = "#changeView" text = "%nightReaderMode">
             </JFXToggleButton>
             <JFXComboBox fx:id = "textSizeBox">
             </JFXComboBox>
-            <JFXButton buttonType="RAISED" text="&gt;"
-                       style="-fx-font-size:20px; -fx-background-color:#71C2B9; -fx-text-fill:white" onAction="#nextChapter" >
+            <JFXButton buttonType="RAISED"
+                       style="-fx-font-size:20px; -fx-background-color:#71C2B9; -fx-text-fill:white" onAction="#nextChapter"
+                       fx:id = "secondAlligator">
                 <font>
                     <Font size="20" />
                 </font>
