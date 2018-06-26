@@ -6,6 +6,8 @@ import model.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
+//handles what happens when you get the catalog: parses json
+//downloads and parses USFM files
 @Singleton
 // only one API connection
 // use dagger2 to inject api service

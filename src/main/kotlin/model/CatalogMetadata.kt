@@ -1,5 +1,7 @@
 package model
 
+//data classes for what we get from the catalog
+//used in Door43 objects to store data
 class CatalogMetadata(val languages: Map<String, LanguageMetadata>) {
 
     fun getLanguageList() : List<LanguageMetadata> {

@@ -48,7 +48,7 @@
                        style="-fx-font-size:20px; -fx-background-color:#71C2B9; -fx-text-fill:white" onAction="#previousChapter"
                         fx:id = "firstAlligator">
             </JFXButton>
-            <JFXToggleButton onAction = "#changeView" text = "NightReaderMode">
+            <JFXToggleButton onAction = "#changeView" text = "%nightReaderMode">
             </JFXToggleButton>
             <JFXComboBox fx:id = "textSizeBox">
             </JFXComboBox>

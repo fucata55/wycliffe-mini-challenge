@@ -1,3 +1,4 @@
+//data classes that moshi uses to put the result of the JSON into Door32Response Objejcts
 package model
 import com.squareup.moshi.Json
 
